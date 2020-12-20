@@ -1,0 +1,9 @@
+channels:
+        - bioconda
+        - conda-forge
+        - anaconda
+dependencies:
+        - filtlong
+        - biopython
+        - pandas 
+        - pyyaml

@@ -1,0 +1,13 @@
+name: esperanto
+channels:
+  - bioconda
+  - conda-forge
+  - anaconda
+dependencies:
+  - conda-build
+  - python=3.6
+  - wxpython=4.0.4
+  - snakemake>=5.4.0
+  - pandas
+  - biopython
+  

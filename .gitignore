@@ -1,4 +1,5 @@
 workflow/.snakemake
 workflow/WorkingSpace*
-workflow/logs/
-*.fastq.gz
+workflow/log/
+datas/
+config_wf.yaml

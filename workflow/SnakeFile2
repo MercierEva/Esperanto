@@ -1,0 +1,35 @@
+# -*- coding: utf-8 -*-
+
+def count_seq(input_file):
+    count=subprocess.Popen("zcat " + input_file + " | wc -l" , shell= True)
+    count=count/4
+    return int(count) 
+
+def filesCheck(wildcards):
+    file = checkpoints.filtration.get(**wildcards).output[0]
+    if count_seq(file) > int(config["params"]["coverage"]):           
+        print("pass")
+        pass_list=[]
+        pass_list = expand(config["folder"]+"05_stats/report_{sample}_final.tsv", sample= wildcards.sample ) + expand(config["folder"]+"04_porechop/{sample}_ont.fasta", sample =wildcards.sample ) 
+        return pass_list
+    else:      
+        return expand(config["folder"]+"06_stats/Temp/{sample}_state.temp", sample=wildcards.sample)
+
+
+configfile: "config_wf.yaml"
+include: "rule_workflow_otu.snk"
+
+
+onsuccess:
+    print("Le workflow est fini; vous pouvez récupérer les fasta ci-dessous")
+    shell("rm .snakemake/log/*")
+
+onerror:
+    print("Le workflow ne s'est pas déroulé comme prévu...")
+
+
+rule all:
+    input:
+        expand(config["folder"]+"/04_porechop/{sample}_ont.fasta", sample=config["samples"]), 
+        expand(config["folder"]+"/05_stats/report_{sample}_final.tsv" , sample=config["samples"])
+

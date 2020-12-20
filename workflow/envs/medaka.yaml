@@ -1,0 +1,10 @@
+channels:
+  - bioconda
+  - conda-forge
+  - anaconda
+  - omnia
+dependencies:
+  - medaka
+  - pandas
+  - subprocess32
+  - samtools
