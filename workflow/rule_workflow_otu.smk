@@ -1,10 +1,11 @@
 import os
 
+
 checkpoint filtration:
     input :  
         ech = lambda wildcards: config["samples"][wildcards.sample]
     output : 
-        config["folder"]+"01_nanofilt/PASS/{sample}_filt.fastq.gz",
+        config["folder"]+"01_nanofilt/PASS/{sample}_filt.fastq.gz"
     params : 
         min_length = config["params"]["filtration"]["min_length"],
         max_length = config["params"]["filtration"]["max_length"],
@@ -19,6 +20,21 @@ checkpoint filtration:
         bash scripts/sh_scripts/run_filtration.sh {input.ech} {params.min_length} {params.max_length} {params.rd} {params.cov} {wildcards.sample} {output[0]} {params.folder} || true
     """
 
+rule set_of_fastq : 
+    input:
+        config["folder"]+"01_nanofilt/PASS/{sample}_filt.fastq.gz"
+    output:
+        files=config["folder"]+"02_filtlong/{sample}_filt_set.fastq.gz"
+    params:
+        cov = config["params"]["coverage"],
+        folder=config["folder"]
+    conda:
+        "envs/filtlong.yaml"
+    message : "Extracting best of reads."
+    shell:"""
+	bash scripts/sh_scripts/run_filtlong.sh {input} {output.files} {params.cov}        
+    """
+
 rule alt_setting :
     input:
         config["folder"]+"01_nanofilt/PASS/{sample}_filt.fastq.gz"
@@ -30,26 +46,24 @@ rule alt_setting :
 
 rule fastq_to_fasta :
     input:
-        config["folder"]+"01_nanofilt/PASS/{sample}_filt.fastq.gz"
+        config["folder"]+"02_filtlong/{sample}_filt_set.fastq.gz"
     output:
-        config["folder"]+"01_nanofilt/PASS/{sample}_filt.fasta"
-    conda: 
-        "envs/pandas.yaml"
+        config["folder"]+"02_filtlong/PASS/{sample}_filt_set.fasta"
     message : "Converting fastq.gz to fasta"
     shell: """
-        zcat {input} | paste - - - - | cut -f 1,2 | sed 's/^@/>/' | tr '\\t' '\\n' > {output}
+        zcat {input[0]} | paste - - - - | cut -f 1,2 | sed 's/^@/>/' | tr '\\t' '\\n' > {output[0]}	
     """
 
 rule cluster_to_consensus :
     input: 
-        config["folder"]+"01_nanofilt/PASS/{sample}_filt.fasta",     
+        config["folder"]+"02_filtlong/PASS/{sample}_filt_set.fasta"   
     output: 
-        config["folder"]+"02_vsearch/PASS/consensus_{sample}.fasta",
+        config["folder"]+"03_vsearch/PASS/consensus_{sample}.fasta"
     conda :
         "envs/vsearch.yaml"
     threads : config["params"]["threading"]
     params : 
-        cluster_dir = config["folder"]+"02_vsearch/{sample}_cluster_", 
+        cluster_dir = config["folder"]+"03_vsearch/{sample}_cluster_", 
         cov = config["params"]["coverage"], 
         folder = config["folder"]
     message : 
@@ -62,9 +76,9 @@ rule cluster_to_consensus :
 
 rule rename : 
     input : 
-        config["folder"]+"02_vsearch/PASS/consensus_{sample}.fasta"
+        config["folder"]+"03_vsearch/PASS/consensus_{sample}.fasta"
     output :
-        config["folder"]+"02_vsearch/PASS/sequence_{sample}_consensus.fasta"
+        config["folder"]+"03_vsearch/PASS/sequence_{sample}_consensus.fasta"
     message : 
         "The consensus header of the selected (dominant) cluster is renamed."
     shell: """
@@ -73,9 +87,9 @@ rule rename :
 
 rule orientation_to_forward : 
     input : 
-        config["folder"]+"02_vsearch/PASS/sequence_{sample}_consensus.fasta"
+        config["folder"]+"03_vsearch/PASS/sequence_{sample}_consensus.fasta"
     output : 
-        config["folder"]+"02_vsearch/PASS/sequence_{sample}_consensus_forward.fasta"
+        config["folder"]+"03_vsearch/PASS/sequence_{sample}_consensus_forward.fasta"
     message : 
         "Reorientation in Sense if the consensus of the strand is in Anti-sense."
     params : 
@@ -86,17 +100,17 @@ rule orientation_to_forward :
 
 rule correct_and_polish :
     input : 
-        config["folder"]+"02_vsearch/PASS/sequence_{sample}_consensus_forward.fasta",
+        config["folder"]+"03_vsearch/PASS/sequence_{sample}_consensus_forward.fasta",
     threads : config["params"]["threading"]
     conda : 
         "envs/medaka.yaml"
     params : 
-        cluster_dir = config["folder"]+"02_vsearch/{sample}_cluster_", 
+        cluster_dir = config["folder"]+"03_vsearch/{sample}_cluster_", 
         model = config["params"]["model"],
         folder = config["folder"]
     output :
-        config["folder"]+"03_medaka/{sample}_medaka_RN.fasta",
-        report=temp(config["folder"]+"05_stats/report_{sample}_complementary2.tsv")
+        config["folder"]+"04_medaka/{sample}_medaka_RN.fasta",
+        report=temp(config["folder"]+"06_stats/report_{sample}_complementary2.tsv")
     message : 
         "Correction/Polishing by Medaka, be careful with the choice of the model..."
     shell: """ 
@@ -105,11 +119,11 @@ rule correct_and_polish :
 
 rule delete_adapters : 
     input : 
-        config["folder"]+"03_medaka/{sample}_medaka_RN.fasta",
-        report=config["folder"]+"05_stats/report_{sample}_complementary2.tsv"
+        config["folder"]+"04_medaka/{sample}_medaka_RN.fasta",
+        report=config["folder"]+"06_stats/report_{sample}_complementary2.tsv"
     output : 
-        config["folder"]+"04_porechop/{sample}_ont.fasta",
-        report=config["folder"]+"05_stats/report_{sample}_final.tsv" 
+        config["folder"]+"05_porechop/{sample}_ont.fasta",
+        report=config["folder"]+"06_stats/report_{sample}_final.tsv" 
     message : 
         "Cutting of the adapters."
     conda : 
@@ -124,7 +138,7 @@ rule aggregated:
     input:
         filesCheck
     output: 
-        config["folder"]+"05_stats/Temp/{sample}_finished.temp"
+        config["folder"]+"06_stats/Temp/{sample}_finished.temp"
     run:
         if len(input) > 1 :
             with open(config["folder"]+"All_fastas.fasta", "a+") as filefinal:

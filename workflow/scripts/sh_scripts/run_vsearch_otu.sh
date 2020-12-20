@@ -6,7 +6,7 @@ cov=$5
 output=$6
 folder=$7
 
-qual=$(cat ${folder}/05_stats/Temp/quality_${sample}.temp)
+qual=$(cat ${folder}06_stats/Temp/quality_${sample}.temp)
 
 if (( qual == 17 )); then
 	nb_id=0.96
@@ -36,6 +36,6 @@ fi
 
 vsearch --cluster_size ${input} --id ${nb_id} --strand both --clusterout_sort --threads ${threads} --consout "${folder}/02_vsearch/consensus_${sample}.fasta" --clusters ${cluster_dir} --fasta_width 0
 
-echo $nb_id > ${folder}/05_stats/Temp/perc_cons_${sample}.temp
+echo $nb_id > ${folder}06_stats/Temp/perc_cons_${sample}.temp
 
-mv ${folder}/02_vsearch/consensus_${sample}.fasta ${output}
+mv ${folder}03_vsearch/consensus_${sample}.fasta ${output}

@@ -9,9 +9,9 @@ import time
 import pandas as pd
 
 def count_seq(input_file):
-    count=subprocess.Popen("zcat " + input_file + " | wc -l" , shell= True)
-    count=count/4
-    return int(count) 
+    count=subprocess.Popen("zcat " + input_file + " | wc -l" , shell= True, stdout=subprocess.PIPE)
+    out, err = count.communicate()
+    return int(out.decode('utf-8'))
 
 def filesCheck(wildcards):
     file = checkpoints.filtration.get(**wildcards).output[0]

@@ -24,12 +24,12 @@ class Report_Stat:
         
 
     def return_qual(self, sample, folder):
-        with open(folder +"/05_stats/Temp/quality_" + sample +".temp", "r") as qual:
+        with open(folder +"/06_stats/Temp/quality_" + sample +".temp", "r") as qual:
             q = qual.read()
         return q
 
     def read_nb_id(self, folder, sample):
-        with open(folder + "/05_stats/Temp/perc_cons_"+sample+".temp", "r") as f : 
+        with open(folder + "/06_stats/Temp/perc_cons_"+sample+".temp", "r") as f : 
             nb_id = f.read()
         return round(float(nb_id), 2)
     
@@ -80,7 +80,7 @@ class Report_Stat:
             coverage = "NA"
     
     def append_on_init(self, folder, sample, output):
-        path=folder + "/05_stats/Temp/" + sample + "*.tsv" 
+        path=folder + "/06_stats/Temp/" + sample + "*.tsv" 
         list_of_array_by_sample = sorted(glob.glob(path))
         list_of_dataframes = []
         for filename in list_of_array_by_sample:
@@ -100,7 +100,7 @@ if __name__ == "__main__":
     d = new_report.calcul_depth(sys.argv[3] + '/' + sys.argv[4])
     array_final = new_report.complete_array(sys.argv[1], quality, depth, nb_id, count, d, cov)
     arr_final_sorted = array_final.sort_values('Depth_2',ascending=False)
-    path_cluster =  sys.argv[9] +"/05_stats/Temp/" + sys.argv[1] + "_cluster_" + sys.argv[7]+ ".tsv"
+    path_cluster =  sys.argv[9] +"/06_stats/Temp/" + sys.argv[1] + "_cluster_" + sys.argv[7]+ ".tsv"
     array_prog = new_report.write_array(array_final, path_cluster)
     if sys.argv[7]==sys.argv[8]:
         print("condition_finale")

@@ -57,18 +57,18 @@ with open(sys.argv[1]) as f:
         if line.startswith(">"):
             nb_seq_centroid = line.split('with_')[1:][0]
             if int(nb_seq_centroid) > 20 :
-                with open(sys.argv[2]+"/02_vsearch/PASS/fasta_filter_" + sys.argv[3] + ".fasta", 'a') as f :      
+                with open(sys.argv[2]+"03_vsearch/PASS/fasta_filter_" + sys.argv[3] + ".fasta", 'a') as f :      
                     f.write(line+'\n')
         else:
             if int(nb_seq_centroid) > 20 :  
-                with open(sys.argv[2]+"/02_vsearch/PASS/fasta_filter_" + sys.argv[3] + ".fasta", 'a') as f :      
+                with open(sys.argv[2]+"03_vsearch/PASS/fasta_filter_" + sys.argv[3] + ".fasta", 'a') as f :      
                     f.write(line+'\n')
 
 
 if len(sys.argv) == 4 :
 
     primer = sys.argv[5]
-    handle = open(sys.argv[2] + "/02_vsearch/PASS/fasta_filter_" + sys.argv[3] + ".fasta", 'rU')
+    handle = open(sys.argv[2] + "03_vsearch/PASS/fasta_filter_" + sys.argv[3] + ".fasta", 'rU')
     SeqRecords = SeqIO.parse(handle, 'fasta')
     SeqRecords_Forward = []
     for rec in SeqRecords:
@@ -82,7 +82,7 @@ if len(sys.argv) == 4 :
 
 else: 
     try :
-        shutil.move(sys.argv[2] + "/02_vsearch/PASS/fasta_filter_" + sys.argv[3] + ".fasta", sys.argv[4])
+        shutil.move(sys.argv[2] + "03_vsearch/PASS/fasta_filter_" + sys.argv[3] + ".fasta", sys.argv[4])
     except FileNotFoundError :
         with open(sys.argv[4], mode='a'): pass
 
