@@ -34,7 +34,7 @@ elif ((qual<=6)); then
 	nb_id=0.498
 fi
 
-vsearch --cluster_size ${input} --id ${nb_id} --strand both --clusterout_sort --threads ${threads} --consout "${folder}/02_vsearch/consensus_${sample}.fasta" --clusters ${cluster_dir} --fasta_width 0
+vsearch --cluster_size ${input} --id ${nb_id} --strand both --clusterout_sort --threads ${threads} --consout "${folder}03_vsearch/consensus_${sample}.fasta" --clusters ${cluster_dir} --fasta_width 0
 
 echo $nb_id > ${folder}06_stats/Temp/perc_cons_${sample}.temp
 
