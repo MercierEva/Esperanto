@@ -4,7 +4,7 @@ checkpoint filtration:
     input :  
         ech = lambda wildcards: config["samples"][wildcards.sample]
     output : 
-        config["folder"]+"/01_nanofilt/PASS/{sample}_filt.fastq.gz",
+        config["folder"]+"01_nanofilt/PASS/{sample}_filt.fastq.gz",
     params : 
         min_length = config["params"]["filtration"]["min_length"],
         max_length = config["params"]["filtration"]["max_length"],
@@ -30,9 +30,9 @@ rule alt_setting :
 
 rule fastq_to_fasta :
     input:
-        config["folder"]+"/01_nanofilt/PASS/{sample}_filt.fastq.gz"
+        config["folder"]+"01_nanofilt/PASS/{sample}_filt.fastq.gz"
     output:
-        config["folder"]+"/01_nanofilt/PASS/{sample}_filt.fasta"
+        config["folder"]+"01_nanofilt/PASS/{sample}_filt.fasta"
     conda: 
         "envs/pandas.yaml"
     message : "Converting fastq.gz to fasta"
@@ -42,14 +42,14 @@ rule fastq_to_fasta :
 
 rule cluster_to_consensus :
     input: 
-        config["folder"]+"/01_nanofilt/PASS/{sample}_filt.fasta",     
+        config["folder"]+"01_nanofilt/PASS/{sample}_filt.fasta",     
     output: 
-        config["folder"]+"/02_vsearch/PASS/consensus_{sample}.fasta",
+        config["folder"]+"02_vsearch/PASS/consensus_{sample}.fasta",
     conda :
         "envs/vsearch.yaml"
     threads : config["params"]["threading"]
     params : 
-        cluster_dir = config["folder"]+"/02_vsearch/{sample}_cluster_", 
+        cluster_dir = config["folder"]+"02_vsearch/{sample}_cluster_", 
         cov = config["params"]["coverage"], 
         folder = config["folder"]
     message : 
@@ -62,9 +62,9 @@ rule cluster_to_consensus :
 
 rule rename : 
     input : 
-        config["folder"]+"/02_vsearch/PASS/consensus_{sample}.fasta"
+        config["folder"]+"02_vsearch/PASS/consensus_{sample}.fasta"
     output :
-        config["folder"]+"/02_vsearch/PASS/sequence_{sample}_consensus.fasta"
+        config["folder"]+"02_vsearch/PASS/sequence_{sample}_consensus.fasta"
     message : 
         "The consensus header of the selected (dominant) cluster is renamed."
     shell: """
@@ -73,9 +73,9 @@ rule rename :
 
 rule orientation_to_forward : 
     input : 
-        config["folder"]+"/02_vsearch/PASS/sequence_{sample}_consensus.fasta"
+        config["folder"]+"02_vsearch/PASS/sequence_{sample}_consensus.fasta"
     output : 
-        config["folder"]+"/02_vsearch/PASS/sequence_{sample}_consensus_forward.fasta"
+        config["folder"]+"02_vsearch/PASS/sequence_{sample}_consensus_forward.fasta"
     message : 
         "Reorientation in Sense if the consensus of the strand is in Anti-sense."
     params : 
@@ -86,17 +86,17 @@ rule orientation_to_forward :
 
 rule correct_and_polish :
     input : 
-        config["folder"]+"/02_vsearch/PASS/sequence_{sample}_consensus_forward.fasta",
+        config["folder"]+"02_vsearch/PASS/sequence_{sample}_consensus_forward.fasta",
     threads : config["params"]["threading"]
     conda : 
         "envs/medaka.yaml"
     params : 
-        cluster_dir = config["folder"]+"/02_vsearch/{sample}_cluster_", 
+        cluster_dir = config["folder"]+"02_vsearch/{sample}_cluster_", 
         model = config["params"]["model"],
         folder = config["folder"]
     output :
-        config["folder"]+"/03_medaka/{sample}_medaka_RN.fasta",
-        report=temp(config["folder"]+"/05_stats/report_{sample}_complementary2.tsv")
+        config["folder"]+"03_medaka/{sample}_medaka_RN.fasta",
+        report=temp(config["folder"]+"05_stats/report_{sample}_complementary2.tsv")
     message : 
         "Correction/Polishing by Medaka, be careful with the choice of the model..."
     shell: """ 
@@ -105,11 +105,11 @@ rule correct_and_polish :
 
 rule delete_adapters : 
     input : 
-        config["folder"]+"/03_medaka/{sample}_medaka_RN.fasta",
-        report=config["folder"]+"/05_stats/report_{sample}_complementary2.tsv"
+        config["folder"]+"03_medaka/{sample}_medaka_RN.fasta",
+        report=config["folder"]+"05_stats/report_{sample}_complementary2.tsv"
     output : 
-        config["folder"]+"/04_porechop/{sample}_ont.fasta",
-        report=config["folder"]+"/05_stats/report_{sample}_final.tsv" 
+        config["folder"]+"04_porechop/{sample}_ont.fasta",
+        report=config["folder"]+"05_stats/report_{sample}_final.tsv" 
     message : 
         "Cutting of the adapters."
     conda : 

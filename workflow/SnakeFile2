@@ -17,7 +17,7 @@ def filesCheck(wildcards):
 
 
 configfile: "config_wf.yaml"
-include: "rule_workflow_otu.snk"
+include: "rule_workflow_otu.smk"
 
 
 onsuccess:

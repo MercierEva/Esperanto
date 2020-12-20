@@ -343,7 +343,7 @@ class Listbook(wx.Listbook):
     def OnRightDown(self, event, array):
         menu = wx.Menu()
         suppr_one = menu.Append(wx.ID_ANY, 'remove one')
-        suppr_all = menu.Append(wx.ID_ANY, 'remove all)
+        suppr_all = menu.Append(wx.ID_ANY, 'remove all')
         menu.Bind(wx.EVT_MENU, lambda event: self.RemoveItem(event, array), suppr_one)
         menu.Bind(wx.EVT_MENU, lambda event: self.RemoveItems(event, array), suppr_all)
         self.PopupMenu(menu)
