@@ -119,10 +119,11 @@ rule variant_calling:
         INDEL=config["folder"]+"08_varscan/{sample}_INDEL.tsv",
         CNS=config["folder"]+"08_varscan/{sample}_CNS.tsv"
     conda : "envs/VC.yaml"
-    params: folder=config["folder"]
+    params: 
+        folder = config["folder"]
     message : "Variant calling"
     shell:"""
-        bashrun_varscan.sh {input} {output[0]} {output[1]} {output[2]} {wildcards.sample} {params.folder}
+        bash scripts/sh_scripts/run_varscan.sh {input} {output[0]} {output[1]} {output[2]} {wildcards.sample} {params.folder} 
     """
 
 

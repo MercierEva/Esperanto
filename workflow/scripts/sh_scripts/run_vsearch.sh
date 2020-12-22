@@ -9,29 +9,29 @@ folder=$7
 qual=$(cat ${folder}06_stats/Temp/quality_${sample}.temp)
 
 
-if (( qual == 17 )); then
+if (( qual == 17 ));then
 	nb_id=0.96
 elif (( qual==16 ));then
 	nb_id=0.95
-elif (( qual==15 )); then
+elif (( qual==15 ));then
 	nb_id=0.937
-elif (( qual==14 )); then
+elif (( qual==14 ));then
 	nb_id=0.92
-elif (( qual==13 ));  then
+elif (( qual==13 ));then
 	nb_id=0.90
-elif (( qual==12 )); then
+elif (( qual==12 ));then
 	nb_id=0.875
-elif (( qual==11 )); then 
+elif (( qual==11 ));then 
 	nb_id=0.841
-elif (( qual==10 )); then
+elif (( qual==10 ));then
 	nb_id=0.80
-elif (( qual==9 )); then
+elif (( qual==9 ));then
 	nb_id=0.748
-elif (( qual==8 )); then
+elif (( qual==8 ));then
 	nb_id=0.683
-elif (( qual==7)); then
+elif (( qual==7 ));then
 	nb_id=0.60
-elif ((qual<=6)); then
+elif (( qual<=6 ));then
 	nb_id=0.498
 fi
 

@@ -8,24 +8,24 @@ folder=$6
 qual=$(cat ${folder}06_stats/Temp/quality_${sample}.temp)
 
 if (( qual == 17 )); then
-	varfreq=0.019952623
-elif (( qual==16 ));then
-	varfreq=0.025118864
+	varfreq=0.02
+elif (( qual==16 )); then
+	varfreq=0.025
 elif (( qual==15 )); then
-	varfreq=0.031622777
+	varfreq=0.03
 elif (( qual==14 )); then
-	varfreq=0.039810717
-elif (( qual==13 ));  then
-	varfreq=0.050118723
+	varfreq=0.04
+elif (( qual==13 )); then
+	varfreq=0.05
 elif (( qual==12 )); then
-	varfreq=0.063095734
+	varfreq=0.06
 elif (( qual==11 )); then 
-	varfreq=0.079432823
+	varfreq=0.08
 elif (( qual==10 )); then
 	varfreq=0.1
 fi
 
 
-varscan pileup2snp $input --p-value 0.01 --min-var-freq $varfreq  > $output_SNP  
-varscan pileup2indel $input --p-value 0.01 --min-var-freq $varfreq > $output_INDEL
-varscan pileup2cns $input --p-value 0.01 --min-var-freq $varfreq > $output_CNS
+varscan pileup2snp ${input} --p-value 0.01 --min-var-freq ${varfreq}  > ${output_SNP}  
+varscan pileup2indel ${input} --p-value 0.01 --min-var-freq ${varfreq} > ${output_INDEL}
+varscan pileup2cns ${input} --p-value 0.01 --min-var-freq ${varfreq} > ${output_CNS}
