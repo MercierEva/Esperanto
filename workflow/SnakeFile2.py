@@ -1,15 +1,14 @@
+# -*- coding: utf-8 -*-
 import gzip
 import time
 import pandas as pd
 import subprocess
-
-def count_seq(input_file):
-    count=subprocess.Popen("zcat " + input_file + " | wc -l" , shell= True, stdout=subprocess.PIPE)
-    out, err = count.communicate()
-    return int(out.decode('utf-8'))
+import numpy as np
 
 def filesCheck(wildcards):
     file = checkpoints.filtration.get(**wildcards).output[0]
+    print(file)
+    print(count_seq(file))
     if count_seq(file) > int(config["params"]["coverage"]):           
         print("pass")
         pass_list=[]

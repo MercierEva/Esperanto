@@ -1,5 +1,10 @@
 import os
 
+def count_seq(input_file):
+    proc = subprocess.Popen("gunzip -c " + input_file + " | wc -l ", shell=True, stdout=subprocess.PIPE) 
+    out, err = proc.communicate()
+    count= int(out.decode('utf-8'))
+    return count 
 
 checkpoint filtration:
     input :  
@@ -12,6 +17,7 @@ checkpoint filtration:
         rd = config["params"]["filtration"]["readtype"], 
         cov = config["params"]["coverage"], 
         folder = config["folder"]
+    threads : config["params"]["threading"]
     conda : 
         "envs/nanofilt.yaml"
     message : 
@@ -26,8 +32,7 @@ rule set_of_fastq :
     output:
         files=config["folder"]+"02_filtlong/{sample}_filt_set.fastq.gz"
     params:
-        cov = config["params"]["coverage"],
-        folder=config["folder"]
+        cov = config["params"]["coverage"]
     conda:
         "envs/filtlong.yaml"
     message : "Extracting best of reads."
@@ -48,15 +53,17 @@ rule fastq_to_fasta :
     input:
         config["folder"]+"02_filtlong/{sample}_filt_set.fastq.gz"
     output:
-        config["folder"]+"02_filtlong/PASS/{sample}_filt_set.fasta"
+        config["folder"]+"02_filtlong/PASS/{sample}_filt.fasta"
+    conda: 
+        "envs/pandas.yaml"
     message : "Converting fastq.gz to fasta"
     shell: """
-        zcat {input[0]} | paste - - - - | cut -f 1,2 | sed 's/^@/>/' | tr '\\t' '\\n' > {output[0]}	
+        zcat {input} | paste - - - - | cut -f 1,2 | sed 's/^@/>/' | tr '\\t' '\\n' > {output}
     """
 
 rule cluster_to_consensus :
     input: 
-        config["folder"]+"02_filtlong/PASS/{sample}_filt_set.fasta"   
+        config["folder"]+"02_filtlong/PASS/{sample}_filt.fasta"    
     output: 
         config["folder"]+"03_vsearch/PASS/consensus_{sample}.fasta"
     conda :
@@ -109,13 +116,25 @@ rule correct_and_polish :
         model = config["params"]["model"],
         folder = config["folder"]
     output :
-        config["folder"]+"04_medaka/{sample}_medaka_RN.fasta",
+        config["folder"]+"04_medaka/{sample}_medaka.fasta",
         report=temp(config["folder"]+"06_stats/report_{sample}_complementary2.tsv")
     message : 
         "Correction/Polishing by Medaka, be careful with the choice of the model..."
     shell: """ 
         bash scripts/sh_scripts/run_medaka_otu.sh {params.cluster_dir} {input} {threads} {params.model} {output[0]} {wildcards.sample} {output.report} {params.folder}
     """
+
+rule rename2 :
+    input :
+        config["folder"]+"04_medaka/{sample}_medaka.fasta"
+    output :
+        config["folder"]+"04_medaka/{sample}_medaka_RN.fasta"
+    message : 
+        "The final fasta file is renamed." 
+    shell : """
+        awk \'/^>/{{ gsub(/>.*_medaka/,\">{wildcards.sample}_medaka\", $1); print $1;  next }}{{print $1}}\' {input[0]} > {output[0]} || true
+    """
+
 
 rule delete_adapters : 
     input : 
@@ -149,7 +168,8 @@ rule aggregated:
                 with open(input[0], "r") as file :
                     print(filefinal.tell())
                     if filefinal.tell() != 0 :
-                        filefinal.write(file.readlines()[1])
+                        for line in file.readlines()[1:]:
+                            filefinal.write(line)
                     else:
                         filefinal.write(file.read())
 

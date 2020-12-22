@@ -1,12 +1,9 @@
 
+
 def count_seq(input_file):
-    count= 0
-    with gzip.open(input_file, 'rt') as handle:
-        try:  
-            for rec in SeqIO.parse(handle, "fastq") :
-                count += 1
-        except:   
-            pass
+    proc = subprocess.Popen("gunzip -c " + input_file + " | wc -l ", shell=True, stdout=subprocess.Pipe) 
+    out, err = proc.communicate()
+    count= int(out.decode('utf-8'))
     return count 
 
 checkpoint filtration :

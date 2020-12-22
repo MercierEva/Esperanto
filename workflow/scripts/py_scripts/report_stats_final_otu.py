@@ -21,8 +21,6 @@ class Report_Stat:
         number=1
         for rec in SeqRecords:
             Seq = str(rec.seq)
-            print(str(rec.id))
-            print(str(number))
             while str(rec.id).endswith(str(number)) == False :
                 self.seq.append("")
                 number+=1
