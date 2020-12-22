@@ -209,8 +209,6 @@ rule rename2 :
     output :
         config["folder"]+"04_medaka/{sample}_medaka_RN.fasta",
         temp(config["folder"]+"06_stats/report_{sample}_complementary2.tsv")
-    conda:
-        "envs/medaka.yaml"
     params:
         folder=config["folder"]
     message : 
