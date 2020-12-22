@@ -19,7 +19,7 @@ if [ ! -d ${folder}06_stats/Temp/ ]; then
 fi
 
 
-for (( q = 17; q > 8 ; q-- )) ; do
+for (( q = 17; q > 9 ; q-- )) ; do
     gunzip -c $input | NanoFilt -l $min_length --maxlength $max_length -q $q --readtype $rd | gzip > ${file_interm}
     #python scripts/py_scripts/filter_fastq.py $input $min_length $max_length $q $file_interm
     if gzip -t $file_interm && [[ $(gunzip -c $file_interm | head -c1 | wc -c) != 0 ]] ; then
@@ -29,7 +29,7 @@ for (( q = 17; q > 8 ; q-- )) ; do
             break 
 	    fi
     fi
-    if [[ "$q" -eq 9 ]]; then
+    if [[ "$q" -eq 10 ]]; then
         mv $file_interm $output
            break 
     fi	    

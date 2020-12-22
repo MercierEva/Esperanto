@@ -1,7 +1,7 @@
 
 
 def count_seq(input_file):
-    proc = subprocess.Popen("gunzip -c " + input_file + " | wc -l ", shell=True, stdout=subprocess.Pipe) 
+    proc = subprocess.Popen("gunzip -c " + input_file + " | wc -l ", shell=True, stdout=subprocess.PIPE) 
     out, err = proc.communicate()
     count= int(out.decode('utf-8'))
     return count 
@@ -119,11 +119,10 @@ rule variant_calling:
         INDEL=config["folder"]+"08_varscan/{sample}_INDEL.tsv",
         CNS=config["folder"]+"08_varscan/{sample}_CNS.tsv"
     conda : "envs/VC.yaml"
+    params: folder=config["folder"]
     message : "Variant calling"
     shell:"""
-        varscan pileup2snp {input} --p-value 0.01 --min-var-freq 0.1  > {output.SNP}  
-        varscan pileup2indel {input} --p-value 0.01 --min-var-freq 0.1 > {output.INDEL} 
-        varscan pileup2cns {input} --p-value 0.01 --min-var-freq 0.1 > {output.CNS}
+        bashrun_varscan.sh {input} {output[0]} {output[1]} {output[2]} {wildcards.sample} {params.folder}
     """
 
 
