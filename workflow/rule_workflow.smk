@@ -203,6 +203,7 @@ rule aggregated:
         filesCheck
     output: 
         config["folder"]+"07_stats/Temp/{sample}_finished.temp"
+    threads: config["params"]["threading"]
     run:
         if len(input) > 1 :
             with open(config["folder"]+"All_fastas.fasta", "a+") as filefinal:

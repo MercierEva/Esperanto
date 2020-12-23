@@ -114,31 +114,31 @@ class Report_Stat:
     def calcul_quality_final(self, quality, depth):
         a=float()
         b=float()
-        if(quality == 17):
+        quality=int(quality)
+        if quality == 17 :
 	        a, b = 16.72, 11.285
-        elif(quality == 16):
+        elif quality == 16 :
 	        a, b = 15.736, 10.621
-        elif(quality == 15):
+        elif quality == 15 :
 	        a, b = 14.753, 9.957
-        elif(quality == 14):
+        elif quality == 14 :
 	        a, b = 13.769, 9.293
-        elif(quality == 13):
+        elif quality == 13 :
 	        a, b = 12.786, 8.63
-        elif(quality == 12):
+        elif quality == 12 :
             a, b = 11.802, 7.966
-        elif(quality == 11): 
+        elif quality == 11 : 
             a, b = 10.819, 7.302
-        elif(quality == 10):
+        elif quality == 10 :
             a, b = 9.835, 6.638
-        elif(quality == 9):
+        elif quality == 9 :
             a, b = 8.8518, 5.9743
-        elif(quality == 8):
+        elif quality == 8 :
             a, b = 7.8682, 5.3105
-        elif(quality == 7):
+        elif quality == 7 :
             a, b = 6.8847, 4.6467
         else :
             a, b = 5.9012, 3.9829
-        
         ln_depth = math.log(float(depth))
         calcul=a*ln_depth+b
         return calcul 
