@@ -1,6 +1,10 @@
 channels:
         - bioconda
+        - anaconda
 dependencies:
         - ngmlr 
         - samtools
         - varscan
+        - biopython
+        - pandas 
+        - pyyaml

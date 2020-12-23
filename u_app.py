@@ -148,17 +148,8 @@ class Listbook(wx.Listbook):
         loadButton = wx.Button(self.panelpage2, wx.ID_ANY, label='fastq.gz', size=((150, 25)))
         vboxtext_fastq.Add(st1, 0, wx.EXPAND | wx.LEFT | wx.RIGHT, border=5)
         vboxtext_fastq.Add(loadButton, 0, wx.EXPAND | wx.ALL, border= 5)
-
-        vbox_param_model = wx.BoxSizer(wx.VERTICAL)
-        param_model = "Model : {pore}_{device}_{caller variant}_{caller version}"
-        stparam_model = wx.StaticText(self.panelpage2, wx.ID_ANY, label=param_model)
-        self.ctrl_param_model = wx.TextCtrl(self.panelpage2, wx.ID_ANY)
-        self.ctrl_param_model.SetValue('r941_min_high_g344')
-        vbox_param_model.Add(stparam_model, 0)
-        vbox_param_model.Add(self.ctrl_param_model, 1, wx.EXPAND)        
-      
+            
         sttBox.Add(vboxtext_fastq, 0, wx.EXPAND | wx.ALL, border = 2)
-        sttBox.Add(vbox_param_model, 0, wx.EXPAND |wx.ALL, border = 2)
         
         stname_folder = wx.StaticText(self.panelpage2, wx.ID_ANY, label='Name of working folder : ')
         self.ctrl_name_folder = wx.TextCtrl(self.panelpage2, wx.ID_ANY)
@@ -187,21 +178,22 @@ class Listbook(wx.Listbook):
         stt2boxlength.Add(self.ctrl_minl, 0, wx.ALL, 5)
         stt2boxlength.Add(txt_maxl, 0,  wx.ALL, 5)
         stt2boxlength.Add(self.ctrl_maxl, 0,  wx.ALL, 5)
+        stt2boxlength.Add(txt_threading, 0,  wx.ALL, 5)
+        stt2boxlength.Add(self.ctrl_thread, 0, wx.ALL, 5)
 
         stt2boxquality = wx.BoxSizer(wx.HORIZONTAL)
         txt_type = wx.StaticText(self.panelpage2, label="Read Type : ")
         self.ctrl_type = wx.TextCtrl(self.panelpage2, wx.ID_ANY,  size=((50,20)))
         self.ctrl_type.SetValue("1D")
-        txt_cov = wx.StaticText(self.panelpage2, label="Minimum number of reads : ")
-        self.ctrl_cov = wx.TextCtrl(self.panelpage2, wx.ID_ANY,  size=((50,20)))
-        self.ctrl_cov.SetValue("300")
+        txt_qual = wx.StaticText(self.panelpage2, label="Minimum Quality for Primary Consensus (Q) : ")
+        self.ctrl_qual = wx.TextCtrl(self.panelpage2, wx.ID_ANY,  size=((50,20)))
+        self.ctrl_qual.SetValue("40")
        
         stt2boxquality.Add(txt_type, 0, wx.ALL  | wx.TOP | wx.RIGHT, 2)
         stt2boxquality.Add(self.ctrl_type, 0, wx.RIGHT, 5)
-        stt2boxquality.Add(txt_cov, 0, wx.ALL | wx.TOP | wx.RIGHT, 2)
-        stt2boxquality.Add(self.ctrl_cov,  0, wx.RIGHT, 5)
-        stt2boxquality.Add(txt_threading, 0,  wx.ALL  | wx.TOP | wx.RIGHT, 2)
-        stt2boxquality.Add(self.ctrl_thread, 0, wx.RIGHT, 5)
+        stt2boxquality.Add(txt_qual, 0, wx.ALL | wx.TOP | wx.RIGHT, 2)
+        stt2boxquality.Add(self.ctrl_qual,  0, wx.RIGHT, 5)
+        
 
         stt2boxamorceR = wx.BoxSizer(wx.HORIZONTAL)
         txt_amorceR = wx.StaticText(self.panelpage2, label="To give the reverse primer (UPPER) : ")
@@ -222,8 +214,6 @@ class Listbook(wx.Listbook):
         hbox_options.Add(st_quality_sample, 0, wx.ALL, 5)
         hbox_options.Add(self.comboBoxOptions, 0, wx.ALL, 5)
         stt2Box1.Add(hbox_options)
-        self.buttonRun = wx.Button(self.panelpage2, wx.ID_ANY, label="Run Pipeline", size=((100,25)))
-        stt2Box1.Add(self.buttonRun, 0, wx.EXPAND | wx.ALL, 5)
 
         stt2Sizer.Add(stt2Box1)
 
@@ -231,14 +221,15 @@ class Listbook(wx.Listbook):
         hboxssts.Add(stt2Sizer, 1, wx.EXPAND | wx.ALL, 5)
 
         vboxPanel2.Add(hboxssts)
+        self.buttonRun = wx.Button(self.panelpage2, wx.ID_ANY, label="Run Pipeline", size=((100,25)))
+        vboxPanel2.Add(self.buttonRun, 0, wx.EXPAND | wx.ALL, 5)
 
         self.minl = self.ctrl_minl.GetValue()
         self.maxl = self.ctrl_maxl.GetValue()
         self.type = self.ctrl_type.GetValue()
-        self.cov = self.ctrl_cov.GetValue()
+        self.qual = self.ctrl_qual.GetValue()
         self.thread = self.ctrl_thread.GetValue()
         self.amorce = self.ctrl_amorce.GetValue()
-        self.model = self.ctrl_param_model.GetValue()
         self.folder = self.ctrl_name_folder.GetValue()
 
         self.listarr1 = MyListCtrl(self.panelpage2, -1)
@@ -283,10 +274,9 @@ class Listbook(wx.Listbook):
         self.minl = self.ctrl_minl.GetValue()
         self.maxl = self.ctrl_maxl.GetValue()
         self.type = self.ctrl_type.GetValue()
-        self.cov = self.ctrl_cov.GetValue()
+        self.qual = self.ctrl_qual.GetValue()
         self.thread = self.ctrl_thread.GetValue()
         self.amorce = self.ctrl_amorce.GetValue()
-        self.model = self.ctrl_param_model.GetValue()
         self.folder = self.ctrl_name_folder.GetValue()
         event.Skip()
     
@@ -377,9 +367,9 @@ class Listbook(wx.Listbook):
                     'params' : {'filtration' : {'min_length' : self.minl,
                     'max_length' : self.maxl,  
                     'readtype' : self.type},
-                    'coverage' : self.cov, 
+                    'quality_cons' : self.qual, 
                     'threading' : int(self.thread), 
-                    'amorce_Reverse' : self.amorce, 'model' : self.model}}
+                    'amorce_Reverse' : self.amorce }}
         
         with open(path_to_config, 'w') as file:
             yaml.dump(dict_file, file, default_flow_style=False, sort_keys=False)
@@ -539,8 +529,11 @@ class MyFrame(wx.Frame):
                                                 stderr = subprocess.STDOUT)
 
                 while True:
-                    wx.GetApp().Yield()
-                    output = self.process_sk.stdout.readline()            
+                    output = self.process_sk.stdout.readline()
+                    try:
+                        wx.GetApp().Yield()      
+                    except: 
+                        pass      
                     if output == '' and self.process_sk.poll() is not None:
                         break
                     if output:   
@@ -551,6 +544,7 @@ class MyFrame(wx.Frame):
                         self.text1.SetLabelText("Finished")
                         self.progress_bar.Hide()
                         break
+                    
             event.Skip()
         
         except ValueError :

@@ -2,12 +2,10 @@ input=$1
 threads=$2
 sample=$3
 cluster_dir=$4
-cov=$(echo "$5 * 0.75" | bc )
-output=$6
-folder=$7
+output=$5
+folder=$6
 
 qual=$(cat ${folder}06_stats/Temp/quality_${sample}.temp)
-
 
 if (( qual == 17 ));then
 	nb_id=0.96
@@ -35,21 +33,4 @@ elif (( qual<=6 ));then
 	nb_id=0.498
 fi
 
-vsearch --cluster_size ${input} --id ${nb_id} --iddef 2 --strand both --clusterout_sort --threads ${threads} --consout ${folder}03_vsearch/consensus_${sample}.fasta --clusters ${cluster_dir} --fasta_width 0
-cluster_bigger=$(ls -S ${cluster_dir}* | head -1)
-count=$(grep -c '>' $cluster_bigger )
-while [[ -e $cluster_bigger ]] && (( $(echo "$count < $cov" | bc -l) )) ; do 
-    if (( $(echo "$nb_id < 0.5" | bc -l) )) ; then
-        mv ${folder}03_vsearch/consensus_${sample}.fasta ${output}
-    else
-	nb_id=$( echo "$nb_id - 0.02" | bc -l )
-	vsearch --cluster_size ${input} --id ${nb_id} --iddef 2 --strand both --clusterout_sort --threads ${threads} --consout ${folder}03_vsearch/consensus_${sample}.fasta --clusters ${cluster_dir} --fasta_width 0  
-	cluster_bigger=$(ls -S ${cluster_dir}* | head -1)
-  	count=$(grep -c '>' $cluster_bigger )
-    fi	  
-done
-echo $nb_id >  ${folder}06_stats/Temp/perc_cons_${sample}.temp
-
-if (( $(echo "$count >= $cov" | bc -l) )) ; then
-    mv ${folder}03_vsearch/consensus_${sample}.fasta ${output}
-fi
+vsearch --cluster_size ${input} --id ${nb_id} --iddef 2 --strand both --clusterout_sort --threads ${threads} --consout ${output} --clusters ${cluster_dir} --fasta_width 0
