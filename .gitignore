@@ -3,3 +3,6 @@ workflow/WorkingSpace*
 workflow/log/
 datas/
 config_wf.yaml
+workflow/run_medaka.sh
+workflow/scripts/py_scripts/reports_stats_final.py
+workflow/scripts/py_scripts/reports_stats_complementary2.py
