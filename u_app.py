@@ -185,9 +185,9 @@ class Listbook(wx.Listbook):
         txt_type = wx.StaticText(self.panelpage2, label="Read Type : ")
         self.ctrl_type = wx.TextCtrl(self.panelpage2, wx.ID_ANY,  size=((50,20)))
         self.ctrl_type.SetValue("1D")
-        txt_qual = wx.StaticText(self.panelpage2, label="Minimum Quality for Primary Consensus (Q) : ")
+        txt_qual = wx.StaticText(self.panelpage2, label="Approx. Quality for Primary Consensus (Q) : ")
         self.ctrl_qual = wx.TextCtrl(self.panelpage2, wx.ID_ANY,  size=((50,20)))
-        self.ctrl_qual.SetValue("40")
+        self.ctrl_qual.SetValue("100")
        
         stt2boxquality.Add(txt_type, 0, wx.ALL  | wx.TOP | wx.RIGHT, 2)
         stt2boxquality.Add(self.ctrl_type, 0, wx.RIGHT, 5)

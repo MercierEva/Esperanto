@@ -1,5 +1,4 @@
 import math
-import sys
 
 class Mathematica_1:
 
@@ -51,9 +50,6 @@ class Mathematica_1:
         calcul=math.exp((int(quality_fin)-float(self.b))/float(self.a))
         return calcul
 
-if __name__ == "__main__":
 
-    class_qual_init = Mathematica_1(sys.argv[1])
-    round(class_qual_init.calcul_depth_min(sys.argv[2]))
 
 

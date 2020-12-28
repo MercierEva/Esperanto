@@ -43,29 +43,29 @@ class Report_Stat:
     def read_nb_id(self, quality):
         quality=int(quality)
         if quality == 17 :
-	        nb_id=0.96
-        elif quality == 16 :
 	        nb_id=0.95
+        elif quality == 16 :
+	        nb_id=0.94
         elif quality == 15 :
-	        nb_id=0.937
+	        nb_id=0.93
         elif quality == 14 :
 	        nb_id=0.92
         elif quality == 13 :
-	        nb_id=0.90
+	        nb_id=0.89
         elif quality == 12 :
-            nb_id=0.875
+            nb_id=0.87
         elif quality == 11 : 
-            nb_id=0.841
+            nb_id=0.83
         elif quality == 10 :
-            nb_id=0.80
+            nb_id=0.79
         elif quality == 9 :
-            nb_id=0.748
+            nb_id=0.74
         elif quality == 8 :
-            nb_id=0.683
+            nb_id=0.68
         elif quality == 7 :
-            nb_id=0.60
-        else :
-            nb_id=0.498
+            nb_id=0.59
+        elif quality == 6 :
+            nb_id=0.49
         
         return nb_id
     
