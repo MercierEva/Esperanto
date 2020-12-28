@@ -4,56 +4,56 @@ import sys
 class Mathematica_1:
 
     def __init__(self, quality):
-        self.quality= quality
+        self.quality=int(quality)
     
     def return_factors(self) :
-        a=float()
-        b=float()
-        if int(self.quality) == 17:
-            a=16.72
-            b=11.285
-        elif int(self.quality) == 16:
-            a=15.736
-            b=10.621
-        elif int(self.quality) == 15:
-            a=14.753
-            b=9.957
-        elif int(self.quality) == 14:
-            a=13.769
-            b=9.293
-        elif int(self.quality) == 13:
-            a=12.786
-            b=8.63
-        elif int(self.quality) == 12:
-            a=11.802
-            b=7.966
-        elif int(self.quality) == 11:
-            a=10.819
-            b=7.302
-        elif int(self.quality) == 10:
-            a=9.835
-            b=6.638
-        elif int(self.quality) == 9:
-            a=8.8518
-            b=5.9743
-        elif int(self.quality) == 8:
-            a=7.8682
-            b=5.3105
-        elif int(self.quality) == 7:
-            a=6.8847
-            b=4.6467
-        elif int(self.quality) == 6:
-            a=5.9012
-            b=3.9829
-        return a, b
+        self.a=float()
+        self.b=float()
+        if self.quality == 17:
+            self.a=16.72
+            self.b=11.285
+        elif self.quality == 16:
+            self.a=15.736
+            self.b=10.621
+        elif self.quality == 15:
+            self.a=14.753
+            self.b=9.957
+        elif self.quality == 14:
+            self.a=13.769
+            self.b=9.293
+        elif self.quality == 13:
+            self.a=12.786
+            self.b=8.63
+        elif self.quality == 12:
+            self.a=11.802
+            self.b=7.966
+        elif self.quality == 11:
+            self.a=10.819
+            self.b=7.302
+        elif self.quality == 10:
+            self.a=9.835
+            self.b=6.638
+        elif self.quality == 9:
+            self.a=8.8518
+            self.b=5.9743
+        elif self.quality == 8:
+            self.a=7.8682
+            self.b=5.3105
+        elif self.quality == 7:
+            self.a=6.8847
+            self.b=4.6467
+        elif self.quality == 6:
+            self.a=5.9012
+            self.b=3.9829
 
-    def calcul_depth_min(self, quality_fin, factor_a, factor_b):
-        calcul=math.exp((int(quality_fin)-float(factor_b))/float(factor_a))
-        return round(calcul)
+    def calcul_depth_min(self, quality_fin):
+        self.return_factors()
+        calcul=math.exp((int(quality_fin)-float(self.b))/float(self.a))
+        return calcul
 
-if __name__=="__main__":
-    class_qual_init=Mathematica_1(sys.argv[1])
-    factor_a, factor_b = class_qual_init.return_factors()
-    class_qual_init.calcul_depth_min(sys.argv[2], factor_a, factor_b)
+if __name__ == "__main__":
+
+    class_qual_init = Mathematica_1(sys.argv[1])
+    round(class_qual_init.calcul_depth_min(sys.argv[2]))
 
 

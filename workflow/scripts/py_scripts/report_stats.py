@@ -31,14 +31,17 @@ class Report_Stat:
         return q
 
 
-    def count_seq_fastq(self, input_file):
+    def count_seq_fasta(self, sample, folder):
+        path = folder + "01_nanofilt/PASS/" + sample +"_filt.fasta" 
         count=0
-        with gzip.open(input_file, 'rt') as in_handle:
-            for title, seq, qual in FastqGeneralIterator(in_handle):
-                count += 1
+        with open(path, 'r') as f:
+            for line in f:
+                if line.startswith('>'):
+                    count+=1
         return count
 
     def read_nb_id(self, quality):
+        quality=int(quality)
         if quality == 17 :
 	        nb_id=0.96
         elif quality == 16 :
@@ -82,9 +85,10 @@ class Report_Stat:
         depth = float(out.decode('utf-8'))
         return depth       
     
-    def length_seq(self, input_file):
+    def length_seq(self, sample, folder):
         total=0
-        handle = open(input_file, 'rU')
+        input_file=folder+"03_porechop/"+sample+"_ont.fasta"
+        handle = open(input_file, 'rU')       
         SeqRecords = SeqIO.parse(handle, 'fasta')
         for rec in SeqRecords:
             Seq = str(rec.seq)
@@ -99,8 +103,9 @@ class Report_Stat:
         df = pd.DataFrame(data=d, columns=['Sample', "Quality_Consensus_Final", "QThreshold_1", "Depth_1", "IdentityPercent_2", "Depth_2", "Mapping depth", "Covered length", "Length", "Sequence fasta"])
         df.to_csv(output, sep='\t', encoding='utf-8', index=False)
 
-    def open_fasta(self, fastafile):
+    def open_fasta(self, sample, folder):
         sequence = ''
+        fastafile=folder+"03_porechop/"+sample+"_ont.fasta"
         with open(fastafile) as f:
             for line in f:
                 line = line.strip()
@@ -146,15 +151,15 @@ class Report_Stat:
 if __name__ == "__main__":
     new_report = Report_Stat()
     quality = new_report.return_qual(sys.argv[1], sys.argv[2])
-    countdepth1 = new_report.count_seq_fastq(sys.argv[3])
+    countdepth1 = new_report.count_seq_fasta(sys.argv[1], sys.argv[2])
     nb_id = new_report.read_nb_id(quality)
     countdepth2 = new_report.count_seq_cluster(sys.argv[1], sys.argv[2])
     map_depth = new_report.calcul_depth(sys.argv[1], sys.argv[2])
-    length = new_report.length_seq(sys.argv[4])
+    length = new_report.length_seq(sys.argv[1], sys.argv[2])
     cov = new_report.calcul_coverage(map_depth, length)
-    sequence=new_report.open_fasta(sys.argv[4])
+    sequence=new_report.open_fasta(sys.argv[1], sys.argv[2])
     qual_fin=new_report.calcul_quality_final(quality, countdepth2)
     array = new_report.complete_array(sys.argv[1], qual_fin, quality, countdepth1, nb_id, countdepth2, map_depth, cov, length, sequence)
-    new_report.write_array(array, sys.argv[5])
+    new_report.write_array(array, sys.argv[3])
         
 

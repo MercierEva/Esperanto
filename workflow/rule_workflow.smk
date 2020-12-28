@@ -1,7 +1,7 @@
 def count_seq(input_file):
-    proc = subprocess.Popen("gunzip -c " + input_file + " | wc -l ", shell=True, stdout=subprocess.PIPE) 
+    proc = subprocess.Popen("zcat " + input_file + " | wc -l ", shell=True, stdout=subprocess.PIPE) 
     out, err = proc.communicate()
-    count= int(out.decode('utf-8'))
+    count= int(out.decode('utf-8'))/4
     return count 
 
 checkpoint filtration :
@@ -20,7 +20,7 @@ checkpoint filtration :
     message : 
         "The filtration between {params.min_length} and {params.max_length} on a variable quality score according to the samples is launched."
     shell: """
-        bash scripts/sh_scripts/run_filtration.sh {input.ech} {params.min_length} {params.max_length} {params.rd} {params.qual} {wildcards.sample} {output.files} {params.folder} 
+        python scripts/py_scripts/run_filtration.py {input.ech} {params.min_length} {params.max_length} {params.rd} {params.qual} {wildcards.sample} {output.files} {params.folder} 
     """
 
 
@@ -38,7 +38,7 @@ rule fastq_to_fasta :
     input:
         config["folder"]+"01_nanofilt/PASS/{sample}_filt.fastq.gz"
     output:
-        config["folder"]+"01_nanofilt/PASS/{sample}_filt_set.fasta"
+        config["folder"]+"01_nanofilt/PASS/{sample}_filt.fasta"
     message : "Converting fastq.gz to fasta"
     shell: """
         zcat {input[0]} | paste - - - - | cut -f 1,2 | sed 's/^@/>/' | tr '\\t' '\\n' > {output[0]}	
@@ -46,7 +46,7 @@ rule fastq_to_fasta :
 
 rule cluster_to_consensus :
     input: 
-        fasta=config["folder"]+"01_nanofilt/PASS/{sample}_filt_set.fasta"
+        fasta=config["folder"]+"01_nanofilt/PASS/{sample}_filt.fasta"
     output: 
         config["folder"]+"02_vsearch/PASS/consensus_{sample}.fasta"
     conda :
@@ -184,8 +184,7 @@ rule consensus :
 
 rule report :
     input :
-        fastqInit=config["folder"]+"01_nanofilt/PASS/{sample}_filt.fastq.gz",
-        ref=config["folder"]+"03_porechop/{sample}_ont.fasta"
+        config["folder"]+"06_seq_inform/{sample}_SCAN.fa"
     output :
         config["folder"]+"07_stats/report_{sample}_final.tsv"
     params:
@@ -195,7 +194,7 @@ rule report :
     message : 
         "Creating ReportStatistics" 
     shell : """
-        python scripts/py_scripts/report_stats.py {wildcards.sample} {params.folder} {input.fastqInit} {input.ref} {output[0]}
+        python scripts/py_scripts/report_stats.py {wildcards.sample} {params.folder} {output[0]}
     """
 
 rule aggregated: 
@@ -205,7 +204,7 @@ rule aggregated:
         config["folder"]+"07_stats/Temp/{sample}_finished.temp"
     threads: config["params"]["threading"]
     run:
-        if len(input) > 1 :
+        if len(input) > 1:
             with open(config["folder"]+"All_fastas.fasta", "a+") as filefinal:
                 with open(input[1], "r") as file :
                     filefinal.write(file.read())
@@ -224,6 +223,6 @@ rule aggregated:
             with open(output[0], "w") as filefinal:
                 filefinal.write("finished")
               
-        else:
+        else :
             with open(output[0], "w") as filefinal:
                 filefinal.write("finished")

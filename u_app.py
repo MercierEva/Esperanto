@@ -367,7 +367,7 @@ class Listbook(wx.Listbook):
                     'params' : {'filtration' : {'min_length' : self.minl,
                     'max_length' : self.maxl,  
                     'readtype' : self.type},
-                    'quality_cons' : self.qual, 
+                    'quality_cons' : int(self.qual), 
                     'threading' : int(self.thread), 
                     'amorce_Reverse' : self.amorce }}
         

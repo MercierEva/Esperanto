@@ -18,18 +18,19 @@ def return_qual(input_file):
 def filesCheck(wildcards):
     files = checkpoints.filtration.get(**wildcards).output[0]
     file_temp_qual=expand(config["folder"]+"07_stats/Temp/quality_{sample}.temp", sample=wildcards.sample)
-    quality= return_qual(file_temp_qual[0])
+    quality=return_qual(file_temp_qual[0])
     class_qual_init=Mathematica_1(quality)
-    factor_a, factor_b = class_qual_init.return_factors()
-    coverage_minim=class_qual_init.calcul_depth_min(config["params"]["quality_cons"], factor_a, factor_b)
-
-    if count_seq(files) > int(coverage_minim):           
-        pass_list=[]
-        pass_list = expand(config["folder"]+"07_stats/report_{sample}_final.tsv", sample= wildcards.sample ) + expand(config["folder"]+"03_porechop/{sample}_ont.fasta", sample =wildcards.sample ) + expand(config["folder"]+"06_seq_inform/{sample}_SCAN.fa", sample=wildcards.sample)
+    pass_list=[]
+    coverage_minim=class_qual_init.calcul_depth_min(config["params"]["quality_cons"])
+    print(count_seq(files))
+    print(int(coverage_minim))
+    print(int(count_seq(files)) > int(coverage_minim))
+    if int(count_seq(files)) > int(coverage_minim):           
+        pass_list += expand(config["folder"]+"07_stats/report_{sample}_final.tsv", sample= wildcards.sample ) + expand(config["folder"]+"03_porechop/{sample}_ont.fasta", sample =wildcards.sample ) + expand(config["folder"]+"06_seq_inform/{sample}_SCAN.fa", sample=wildcards.sample)
         return pass_list
     else:     
-        return expand(config["folder"]+"07_stats/Temp/{sample}_state.temp", sample=wildcards.sample)
-
+        pass_list += expand(config["folder"]+"07_stats/Temp/{sample}_state.temp", sample=wildcards.sample)
+        return pass_list
 
 configfile : "config_wf.yaml"
 include: "rule_workflow.smk"
@@ -45,6 +46,6 @@ onerror:
 
 rule all:
     input:
-        expand(config["folder"]+"07_stats/Temp/{sample}_finished.temp", sample=config["samples"]),
+        expand(config["folder"]+"07_stats/Temp/{sample}_finished.temp", sample=config["samples"])
                
 
