@@ -1,9 +1,3 @@
-def count_seq(input_file):
-    proc = subprocess.Popen("zcat " + input_file + " | wc -l ", shell=True, stdout=subprocess.PIPE) 
-    out, err = proc.communicate()
-    count= int(out.decode('utf-8'))/4
-    return count 
-
 checkpoint filtration :
     input:
         ech=lambda wildcards: config["samples"][wildcards.sample] 

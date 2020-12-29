@@ -33,4 +33,4 @@ elif [ $qual = '6' ];then
 	nb_id=0.49
 fi
 
-vsearch --cluster_size ${input} --id ${nb_id} --iddef 2 --strand both --clusterout_sort --threads ${threads} --consout ${output} --clusters ${cluster_dir} --fasta_width 0
+vsearch --cluster_size ${input} --id ${nb_id} --iddef 0 --strand both --clusterout_sort --threads ${threads} --consout ${output} --clusters ${cluster_dir} --fasta_width 0

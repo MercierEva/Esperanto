@@ -15,6 +15,11 @@ output=sys.argv[7]
 folder=sys.argv[8]
 file_interm=str(folder) + "01_nanofilt/" + str(sample) + "_filt.fastq.gz"
 
+def count_seq(input_file):
+    proc = subprocess.Popen("zcat " + input_file + " | wc -l ", shell=True, stdout=subprocess.PIPE) 
+    out, err = proc.communicate()
+    count= int(out.decode('utf-8'))//4
+    return count 
 
 try:
     os.mkdir(folder+"07_stats")
@@ -27,21 +32,10 @@ for q in range(17, 6, -1) :
     unzipping=subprocess.run(["gunzip", "-c", str(input_file)] , check=True, capture_output=True)
     filtering = subprocess.run(["NanoFilt", "-l", str(min_length),"--maxlength",str(max_length),"-q",str(q),"--readtype", str(rd)], input=unzipping.stdout, capture_output=True)
     subprocess.run(["gzip"], input=filtering.stdout, stdout=gzip.open(file_interm, 'wb'))
-    init_cov=Mathematica_1(q)
-    cov=init_cov.calcul_depth_min(quality_cons)
-    try:
-        with gzip.open(file_interm, 'rb') as f:
-            file_content = f.read(1)
-            if len(file_content) > 0 :
-                reads = []
-                for line in f:
-                    if line.decode('utf-8').startswith("@"):
-                        reads.append(line)
-                totalReads = len(reads)
-            if totalReads > cov :
-                break 
-    except:
-        pass
+    if count_seq(file_interm) > 75 : 
+        break
+    else:
+        continue
 
 shutil.move(file_interm, output)
 

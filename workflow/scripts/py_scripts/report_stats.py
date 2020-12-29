@@ -10,7 +10,7 @@ import math
 class Report_Stat:
 
     def __init__(self):
-        self.d = {'Sample':[], "Quality_Consensus_Final": [], "QThreshold_1":[], "Depth_1":[], "IdentityPercent_2":[], "Depth_2":[], "Mapping depth":[], "Covered length":[],  "Length":[], "Sequence fasta":[]}
+        self.d = {'Sample':[], "Quality_Consensus_Final": [], "QThreshold_1":[], "Depth_1":[], "IdentityPercent_2":[], "Depth_2":[], "Mean_Read_Depth":[], "Breadth_of_Coverage":[],  "Length":[], "Sequence fasta":[]}
 
     def complete_array(self, sample, qual_fin, qual, countfastq, nb_id, countcluster, map_depth, cov, length, fasta):
         self.d["Sample"].append(sample)
@@ -19,8 +19,8 @@ class Report_Stat:
         self.d["Depth_1"].append(countfastq)
         self.d["IdentityPercent_2"].append(nb_id)
         self.d["Depth_2"].append(int(countcluster))
-        self.d["Mapping depth"].append(map_depth)
-        self.d["Covered length"].append(cov)
+        self.d["Mean_Read_Depth"].append(map_depth)
+        self.d["Breadth_of_Coverage"].append(cov)
         self.d["Length"].append(length)
         self.d["Sequence fasta"].append(fasta)
         return self.d
@@ -78,12 +78,12 @@ class Report_Stat:
                     break
         return count
         
-    def calcul_depth(self, sample, folder):
-        cmd = "samtools mpileup " + folder +"04_multialignment/"+ sample +"_MSA.sorted.bam | awk -v X=5 '$4>=X' | wc -l"
+    def calcul_mean_read_depth(self, sample, folder):
+        cmd = "samtools depth -a " + folder +"04_multialignment/"+ sample +"_MSA.sorted.bam | awk '{c++;s+=$3}END{print s/c}'"
         proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
         out, err = proc.communicate()
-        depth = float(out.decode('utf-8'))
-        return depth       
+        print(float(out))
+        return float(out)
     
     def length_seq(self, sample, folder):
         total=0
@@ -95,12 +95,15 @@ class Report_Stat:
             total += len(Seq)
         return total
     
-    def calcul_coverage(self, depth, length):
-        coverage = depth/length*100
-        return round(float(coverage), 2)
+    def calcul_bread_of_coverage(self, sample, folder):
+        cmd="samtools depth -a " + folder +"04_multialignment/"+ str(sample) +"_MSA.sorted.bam | awk '{c++; if($3>0) total+=1}END{print (total/c)*100}'"
+        proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
+        out, err = proc.communicate()
+        print(float(out))
+        return float(out)
 
     def write_array(self, d, output):
-        df = pd.DataFrame(data=d, columns=['Sample', "Quality_Consensus_Final", "QThreshold_1", "Depth_1", "IdentityPercent_2", "Depth_2", "Mapping depth", "Covered length", "Length", "Sequence fasta"])
+        df = pd.DataFrame(data=d, columns=['Sample', "Quality_Consensus_Final", "QThreshold_1", "Depth_1", "IdentityPercent_2", "Depth_2",  "Mean_Read_Depth", "Breadth_of_Coverage", "Length", "Sequence fasta"])
         df.to_csv(output, sep='\t', encoding='utf-8', index=False)
 
     def open_fasta(self, sample, folder):
@@ -154,9 +157,9 @@ if __name__ == "__main__":
     countdepth1 = new_report.count_seq_fasta(sys.argv[1], sys.argv[2])
     nb_id = new_report.read_nb_id(quality)
     countdepth2 = new_report.count_seq_cluster(sys.argv[1], sys.argv[2])
-    map_depth = new_report.calcul_depth(sys.argv[1], sys.argv[2])
+    map_depth = new_report.calcul_mean_read_depth(sys.argv[1], sys.argv[2])
     length = new_report.length_seq(sys.argv[1], sys.argv[2])
-    cov = new_report.calcul_coverage(map_depth, length)
+    cov = new_report.calcul_bread_of_coverage(sys.argv[1], sys.argv[2])
     sequence=new_report.open_fasta(sys.argv[1], sys.argv[2])
     qual_fin=new_report.calcul_quality_final(quality, countdepth2)
     array = new_report.complete_array(sys.argv[1], qual_fin, quality, countdepth1, nb_id, countdepth2, map_depth, cov, length, sequence)

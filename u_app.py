@@ -264,9 +264,9 @@ class Listbook(wx.Listbook):
     def Build_OTU_table(self, event):
 
         if self.comboBoxOptions.GetSelection() == 0:
-            subprocess.call(['soffice',  self.workspace + '/workflow/'+ self.folder +'ReportStatistics.tsv'])
+            subprocess.call(['soffice',  self.workspace + '/workflow/'+ self.folder +'/ReportStatistics.tsv'])
         else:    
-            subprocess.call(['soffice',  self.workspace + '/workflow/'+ self.folder +'Table_OTU.tsv'])
+            subprocess.call(['soffice',  self.workspace + '/workflow/'+ self.folder +'/Table_OTU.tsv'])
 
     
     def Change_name_P2(self, event):
@@ -459,8 +459,10 @@ class MyFrame(wx.Frame):
     
 
     def generateHisto(self, event):
-        self.text1.SetLabelText("Started")       
+        self.text1.SetLabelText("Started")     
+        self.progress_bar.Show()  
         self.progress_bar.Pulse() 
+        wx.GetApp().Yield()
         self.listbook.SetSelection(1) 
  
         dico_data_input = {}
