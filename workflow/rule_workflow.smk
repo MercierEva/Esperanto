@@ -141,15 +141,13 @@ rule variant_calling:
     input : 
         config["folder"]+"04_multialignment/{sample}.pileup"
     output :
-        SNP=config["folder"]+"05_varscan/{sample}_SNP.tsv",
-        INDEL=config["folder"]+"05_varscan/{sample}_INDEL.tsv",
         CNS=config["folder"]+"05_varscan/{sample}_CNS.tsv"
     conda : "envs/VC.yaml"
     params: 
         folder = config["folder"]
     message : "Variant calling"
     shell:"""
-        bash scripts/sh_scripts/run_varscan.sh {input} {output[0]} {output[1]} {output[2]} {wildcards.sample} {params.folder} 
+        bash scripts/sh_scripts/run_varscan.sh {input} config["folder"]+"05_varscan/{wildcards.sample}_SNP.tsv" config["folder"]+"05_varscan/{wilcards.sample}_INDEL.tsv" {output} {wildcards.sample} {params.folder} 
     """
 
 rule consensus : 
@@ -200,11 +198,11 @@ rule aggregated:
     run:
         if len(input) > 1:
             with open(config["folder"]+"All_fastas.fasta", "a+") as filefinal:
-                with open(input[1], "r") as file :
+                with open(config["folder"]+"03_porechop/"+wildcards.sample+"_ont.fasta", "r") as file :
                     filefinal.write(file.read())
             
             with open(config["folder"]+ "All_Consensus_fastas.fasta", "a+") as filefinal:
-                with open(input[2],"r") as file:
+                with open(config["folder"]+"06_seq_inform/"+wildcards.sample+"_SCAN.fa"),"r") as file:
                     filefinal.write(file.read())
                 
             with open(config["folder"] + "ReportStatistics.tsv", "a+") as filefinal:

@@ -19,10 +19,10 @@ def filesCheck(wildcards):
     files = checkpoints.filtration.get(**wildcards).output[0]
     pass_list=[]
     if int(count_seq(files)) > 75 :           
-        pass_list += expand(config["folder"]+"07_stats/report_{sample}_final.tsv", sample= wildcards.sample ) + expand(config["folder"]+"03_porechop/{sample}_ont.fasta", sample =wildcards.sample ) + expand(config["folder"]+"06_seq_inform/{sample}_SCAN.fa", sample=wildcards.sample)
+        pass_list = expand(config["folder"]+"07_stats/report_{sample}_final.tsv", sample= wildcards.sample ) 
         return pass_list
     else:     
-        pass_list += expand(config["folder"]+"07_stats/Temp/{sample}_state.temp", sample=wildcards.sample)
+        pass_list = expand(config["folder"]+"07_stats/Temp/{sample}_state.temp", sample=wildcards.sample)
         return pass_list
 
 configfile : "config_wf.yaml"
@@ -30,7 +30,6 @@ include: "rule_workflow.smk"
 
 onsuccess:
     print("Le workflow est fini; vous pouvez récupérer les fasta ci-dessous")
-    shell("rm .snakemake/log/*")
 
 onerror:
     print("Le workflow ne s'est pas déroulé comme prévu...")

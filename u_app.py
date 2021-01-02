@@ -99,11 +99,11 @@ class Listbook(wx.Listbook):
         txt_interval="max size of data : "
         stinterval = wx.StaticText(self.panelpage1, wx.ID_ANY, label=txt_interval)
         self.ctrl_param_interval = wx.TextCtrl(self.panelpage1, wx.ID_ANY,size=((50,17)))
-        self.ctrl_param_interval.SetValue('6000')
+        self.ctrl_param_interval.SetValue(6000)
         hboxP1_2.Add(stinterval, 0, wx.LEFT, 20)
         hboxP1_2.Add(self.ctrl_param_interval, 0, wx.LEFT, 5)
 
-        self.interval= int(self.ctrl_param_interval.GetValue())
+        self.interval= self.ctrl_param_interval.GetValue()
 
         self.buttonexe1 = wx.Button(self.panelpage1, label="Show histograms of lengths of data loading", size=(400, 25))
         self.buttonexe1.SetBackgroundColour('#9EA3FF')
@@ -174,45 +174,49 @@ class Listbook(wx.Listbook):
         self.ctrl_maxl = wx.TextCtrl(self.panelpage2, wx.ID_ANY, size=((50,20)))
         txt_threading = wx.StaticText(self.panelpage2, label="Threads :")
         self.ctrl_thread = wx.TextCtrl(self.panelpage2, wx.ID_ANY, size=((50,20)))
-        stt2boxlength.Add(txt_minl, 0, wx.ALL, 5)
-        stt2boxlength.Add(self.ctrl_minl, 0, wx.ALL, 5)
-        stt2boxlength.Add(txt_maxl, 0,  wx.ALL, 5)
+        stt2boxlength.Add(txt_minl, 0, wx.ALL , 5)
+        stt2boxlength.Add(self.ctrl_minl, 0, wx.ALL , 5)
+        stt2boxlength.AddSpacer(10)
+        stt2boxlength.Add(txt_maxl, 0,  wx.ALL , 5)
         stt2boxlength.Add(self.ctrl_maxl, 0,  wx.ALL, 5)
-        stt2boxlength.Add(txt_threading, 0,  wx.ALL, 5)
-        stt2boxlength.Add(self.ctrl_thread, 0, wx.ALL, 5)
+
 
         stt2boxquality = wx.BoxSizer(wx.HORIZONTAL)
         txt_type = wx.StaticText(self.panelpage2, label="Read Type : ")
-        self.ctrl_type = wx.TextCtrl(self.panelpage2, wx.ID_ANY,  size=((50,20)))
+        self.ctrl_type = wx.ComboBox(self.panelpage2, wx.ID_ANY, style=wx.CB_READONLY, choices=["1D", "2D", "1D2"])
         self.ctrl_type.SetValue("1D")
-        txt_qual = wx.StaticText(self.panelpage2, label="Approx. Quality for Primary Consensus (Q) : ")
-        self.ctrl_qual = wx.TextCtrl(self.panelpage2, wx.ID_ANY,  size=((50,20)))
-        self.ctrl_qual.SetValue("100")
-       
-        stt2boxquality.Add(txt_type, 0, wx.ALL  | wx.TOP | wx.RIGHT, 2)
-        stt2boxquality.Add(self.ctrl_type, 0, wx.RIGHT, 5)
-        stt2boxquality.Add(txt_qual, 0, wx.ALL | wx.TOP | wx.RIGHT, 2)
-        stt2boxquality.Add(self.ctrl_qual,  0, wx.RIGHT, 5)
+        
+        stt2boxquality.Add(txt_type, 0, wx.ALL, 5)
+        stt2boxquality.Add(self.ctrl_type, 0, wx.ALL, 5)
+        stt2boxquality.AddSpacer(20)
+        stt2boxquality.Add(txt_threading, 0,  wx.ALL, 5)
+        stt2boxquality.Add(self.ctrl_thread, 0, wx.ALL, 5)
         
 
         stt2boxamorceR = wx.BoxSizer(wx.HORIZONTAL)
         txt_amorceR = wx.StaticText(self.panelpage2, label="To give the reverse primer (UPPER) : ")
         self.ctrl_amorce = wx.TextCtrl(self.panelpage2, wx.ID_ANY, size=((150, 25)))
         self.ctrl_amorce.SetValue("")
-        stt2boxamorceR.Add(txt_amorceR, 1, wx.EXPAND | wx.ALL, 2)
-        stt2boxamorceR.Add(self.ctrl_amorce, 1, wx.EXPAND |wx.ALL, 2)
+        stt2boxamorceR.AddSpacer(5)
+        stt2boxamorceR.Add(txt_amorceR, 0, wx.ALIGN_CENTER_VERTICAL, 5)
+        stt2boxamorceR.Add(self.ctrl_amorce, 0, wx.ALL, 5)
 
-        stt2Box1.Add(stt2boxlength, 0, wx.ALL, border=5)
-        stt2Box1.Add(stt2boxquality, 0, wx.EXPAND | wx.ALL, border=5)
-        stt2Box1.Add(stt2boxamorceR, 0, wx.ALL, border=5)
+        stt2Box1.AddSpacer(5)
+        stt2Box1.Add(stt2boxlength, 0, wx.EXPAND, border=5)
+        stt2Box1.AddSpacer(5)
+        stt2Box1.Add(stt2boxquality, 0, wx.EXPAND, border=5)
+        stt2Box1.AddSpacer(5)
+        stt2Box1.Add(stt2boxamorceR, 0, wx.EXPAND, border=5)
 
         hbox_options=wx.BoxSizer(wx.HORIZONTAL)
         st_quality_sample = wx.StaticText(self.panelpage2, label="By sample, there is : ")
         list_options = ['One Specie for one final sequence', 'Multiples species for an OTU table']
         self.comboBoxOptions = wx.ComboBox(self.panelpage2, wx.ID_ANY, style = wx.CB_DROPDOWN | wx.EXPAND, choices = list_options)
         self.comboBoxOptions.SetValue('Please, choice here ')
-        hbox_options.Add(st_quality_sample, 0, wx.ALL, 5)
+        hbox_options.AddSpacer(5)
+        hbox_options.Add(st_quality_sample, 0, wx.TOP | wx.ALIGN_CENTER_VERTICAL, 5)
         hbox_options.Add(self.comboBoxOptions, 0, wx.ALL, 5)
+        stt2Box1.AddSpacer(5)
         stt2Box1.Add(hbox_options)
 
         stt2Sizer.Add(stt2Box1)
@@ -227,7 +231,6 @@ class Listbook(wx.Listbook):
         self.minl = self.ctrl_minl.GetValue()
         self.maxl = self.ctrl_maxl.GetValue()
         self.type = self.ctrl_type.GetValue()
-        self.qual = self.ctrl_qual.GetValue()
         self.thread = self.ctrl_thread.GetValue()
         self.amorce = self.ctrl_amorce.GetValue()
         self.folder = self.ctrl_name_folder.GetValue()
@@ -274,7 +277,6 @@ class Listbook(wx.Listbook):
         self.minl = self.ctrl_minl.GetValue()
         self.maxl = self.ctrl_maxl.GetValue()
         self.type = self.ctrl_type.GetValue()
-        self.qual = self.ctrl_qual.GetValue()
         self.thread = self.ctrl_thread.GetValue()
         self.amorce = self.ctrl_amorce.GetValue()
         self.folder = self.ctrl_name_folder.GetValue()
@@ -310,7 +312,7 @@ class Listbook(wx.Listbook):
     
     def Change_name_P1(self, event):
 
-        self.interval = int(self.ctrl_param_interval.GetValue())
+        self.interval = self.ctrl_param_interval.GetValue()
         event.Skip()  
 
     def OnOpenFiles(self):
@@ -506,8 +508,8 @@ class MyFrame(wx.Frame):
             self.text1.SetLabelText("Started")
             self.progress_bar.Show()
             self.progress_bar.Pulse()  
-            inputNf1 = 'snakemake --force --forceall -s SnakeFile --cores '+ self.listbook.thread +' --use-conda'
-            inputNf2 = 'snakemake --force --forceall -s SnakeFile2 --cores ' + self.listbook.thread + ' --use-conda'
+            inputNf1 = 'snakemake -s SnakeFile --cores '+ self.listbook.thread +' --use-conda'
+            inputNf2 = 'snakemake -s SnakeFile2 --cores ' + self.listbook.thread + ' --use-conda'
             
             with cd(self.workspace + '/workflow/'):
                 try:
