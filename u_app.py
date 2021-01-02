@@ -99,7 +99,7 @@ class Listbook(wx.Listbook):
         txt_interval="max size of data : "
         stinterval = wx.StaticText(self.panelpage1, wx.ID_ANY, label=txt_interval)
         self.ctrl_param_interval = wx.TextCtrl(self.panelpage1, wx.ID_ANY,size=((50,17)))
-        self.ctrl_param_interval.SetValue(6000)
+        self.ctrl_param_interval.SetValue('6000')
         hboxP1_2.Add(stinterval, 0, wx.LEFT, 20)
         hboxP1_2.Add(self.ctrl_param_interval, 0, wx.LEFT, 5)
 
@@ -485,7 +485,7 @@ class MyFrame(wx.Frame):
                     lens.append(len(data[l].strip()))
             lens_s = sorted(lens) 
             step = 100
-            max_range=self.listbook.interval
+            max_range=int(self.listbook.interval)
             for k in range(0, max_range, step):
                 self.listbook.TextCtrlRunHisto.AppendText("%d-%d  " % (k, k+ step))
                 j = filter(lambda x: x >= k and x < k+step, lens_s)
