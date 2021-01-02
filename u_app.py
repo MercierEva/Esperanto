@@ -138,8 +138,8 @@ class Listbook(wx.Listbook):
         vboxPanel2 = wx.BoxSizer(wx.VERTICAL)
         hboxssts = wx.BoxSizer(wx.HORIZONTAL)
 
-        stt = wx.StaticBox(self.panelpage2, -1, "Step 1")
-        sttSizer = wx.StaticBoxSizer(stt, wx.VERTICAL)
+        stt = wx.StaticBox(self.panelpage2, 1, "Step 1")
+        sttSizer = wx.StaticBoxSizer(stt, wx.VERTICAL )
         sttBox = wx.BoxSizer(wx.VERTICAL)
 
         vboxtext_fastq = wx.BoxSizer(wx.VERTICAL)
@@ -149,7 +149,7 @@ class Listbook(wx.Listbook):
         vboxtext_fastq.Add(st1, 0, wx.EXPAND | wx.LEFT | wx.RIGHT, border=5)
         vboxtext_fastq.Add(loadButton, 0, wx.EXPAND | wx.ALL, border= 5)
             
-        sttBox.Add(vboxtext_fastq, 0, wx.EXPAND | wx.ALL, border = 2)
+        sttBox.Add(vboxtext_fastq, 0, wx.EXPAND | wx.ALL, border = 5)
         
         stname_folder = wx.StaticText(self.panelpage2, wx.ID_ANY, label='Name of working folder : ')
         self.ctrl_name_folder = wx.TextCtrl(self.panelpage2, wx.ID_ANY)
@@ -163,7 +163,7 @@ class Listbook(wx.Listbook):
         sttBox.Add(self.killbutton, 1, wx.ALL | wx.EXPAND, 2)
         sttSizer.Add(sttBox, 0, wx.EXPAND | wx.ALL, border = 5)
 
-        stt2 = wx.StaticBox(self.panelpage2, -1, "Step 2")
+        stt2 = wx.StaticBox(self.panelpage2, 1, "Step 2")
         stt2Sizer = wx.StaticBoxSizer(stt2, wx.VERTICAL)
         stt2Box1 = wx.BoxSizer(wx.VERTICAL)
 
@@ -186,11 +186,11 @@ class Listbook(wx.Listbook):
         self.ctrl_type = wx.ComboBox(self.panelpage2, wx.ID_ANY, style=wx.CB_READONLY, choices=["1D", "2D", "1D2"])
         self.ctrl_type.SetValue("1D")
         
-        stt2boxquality.Add(txt_type, 0, wx.ALL, 5)
-        stt2boxquality.Add(self.ctrl_type, 0, wx.ALL, 5)
+        stt2boxquality.Add(txt_type, wx.ID_ANY, wx.ALL, 10)
+        stt2boxquality.Add(self.ctrl_type, wx.ID_ANY, wx.ALL, 5)
         stt2boxquality.AddSpacer(20)
-        stt2boxquality.Add(txt_threading, 0,  wx.ALL, 5)
-        stt2boxquality.Add(self.ctrl_thread, 0, wx.ALL, 5)
+        stt2boxquality.Add(txt_threading, wx.ID_ANY,  wx.ALL, 10)
+        stt2boxquality.Add(self.ctrl_thread,wx.ID_ANY, wx.ALL, 10)
         
 
         stt2boxamorceR = wx.BoxSizer(wx.HORIZONTAL)
@@ -198,13 +198,13 @@ class Listbook(wx.Listbook):
         self.ctrl_amorce = wx.TextCtrl(self.panelpage2, wx.ID_ANY, size=((150, 25)))
         self.ctrl_amorce.SetValue("")
         stt2boxamorceR.AddSpacer(5)
-        stt2boxamorceR.Add(txt_amorceR, 0, wx.ALIGN_CENTER_VERTICAL, 5)
-        stt2boxamorceR.Add(self.ctrl_amorce, 0, wx.ALL, 5)
+        stt2boxamorceR.Add(txt_amorceR, wx.ID_ANY, wx.ALIGN_CENTER_VERTICAL, 5)
+        stt2boxamorceR.Add(self.ctrl_amorce, wx.ID_ANY, wx.ALL, 5)
 
         stt2Box1.AddSpacer(5)
-        stt2Box1.Add(stt2boxlength, 0, wx.EXPAND, border=5)
+        stt2Box1.Add(stt2boxlength,0 , wx.EXPAND, border=5)
         stt2Box1.AddSpacer(5)
-        stt2Box1.Add(stt2boxquality, 0, wx.EXPAND, border=5)
+        stt2Box1.Add(stt2boxquality,0, wx.EXPAND, border=5)
         stt2Box1.AddSpacer(5)
         stt2Box1.Add(stt2boxamorceR, 0, wx.EXPAND, border=5)
 
@@ -214,17 +214,18 @@ class Listbook(wx.Listbook):
         self.comboBoxOptions = wx.ComboBox(self.panelpage2, wx.ID_ANY, style = wx.CB_DROPDOWN | wx.EXPAND, choices = list_options)
         self.comboBoxOptions.SetValue('Please, choice here ')
         hbox_options.AddSpacer(5)
-        hbox_options.Add(st_quality_sample, 0, wx.TOP | wx.ALIGN_CENTER_VERTICAL, 5)
+        hbox_options.Add(st_quality_sample,0, wx.TOP | wx.ALIGN_CENTER_VERTICAL, 5)
         hbox_options.Add(self.comboBoxOptions, 0, wx.ALL, 5)
         stt2Box1.AddSpacer(5)
         stt2Box1.Add(hbox_options)
 
         stt2Sizer.Add(stt2Box1)
+        hboxssts.AddSpacer(10)
+        hboxssts.Add(sttSizer, wx.ID_ANY, wx.EXPAND | wx.ALL, 5)
+        hboxssts.AddSpacer(5)
+        hboxssts.Add(stt2Sizer,wx.ID_ANY, wx.EXPAND | wx.ALL, 5)
 
-        hboxssts.Add(sttSizer, 1, wx.EXPAND | wx.ALL, 5)
-        hboxssts.Add(stt2Sizer, 1, wx.EXPAND | wx.ALL, 5)
-
-        vboxPanel2.Add(hboxssts)
+        vboxPanel2.Add(hboxssts, 0, wx.EXPAND | wx.ALL, 5)
         self.buttonRun = wx.Button(self.panelpage2, wx.ID_ANY, label="Run Pipeline", size=((100,25)))
         vboxPanel2.Add(self.buttonRun, 0, wx.EXPAND | wx.ALL, 5)
 
