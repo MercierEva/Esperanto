@@ -2,7 +2,6 @@ import subprocess
 import sys
 import gzip
 import os
-from math_calcul import Mathematica_1
 import shutil
 
 input_file=sys.argv[1]
