@@ -140,13 +140,13 @@ rule variant_calling:
     input : 
         config["folder"]+"04_multialignment/{sample}.pileup"
     output :
-        CNS=config["folder"]+"05_varscan/{sample}_CNS.tsv"
+        config["folder"]+"05_varscan/{sample}_CNS.tsv"
     conda : "envs/VC.yaml"
     params: 
         folder = config["folder"]
     message : "Variant calling"
     shell:"""
-        bash scripts/sh_scripts/run_varscan.sh {input} config["folder"]+"05_varscan/{wildcards.sample}_SNP.tsv" config["folder"]+"05_varscan/{wilcards.sample}_INDEL.tsv" {output} {wildcards.sample} {params.folder} 
+        bash scripts/sh_scripts/run_varscan.sh {input} {params.folder}05_varscan/{wildcards.sample}_SNP.tsv {params.folder}05_varscan/{wildcards.sample}_INDEL.tsv {output} {wildcards.sample} {params.folder} 
     """
 
 rule consensus : 
