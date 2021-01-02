@@ -9,10 +9,9 @@ input_file=sys.argv[1]
 min_length=sys.argv[2] 
 max_length=sys.argv[3]
 rd=sys.argv[4]
-quality_cons=sys.argv[5]
-sample=sys.argv[6]
-output=sys.argv[7]
-folder=sys.argv[8]
+sample=sys.argv[5]
+output=sys.argv[6]
+folder=sys.argv[7]
 file_interm=str(folder) + "01_nanofilt/" + str(sample) + "_filt.fastq.gz"
 
 def count_seq(input_file):

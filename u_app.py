@@ -369,8 +369,7 @@ class Listbook(wx.Listbook):
                     'folder' : self.folder+'/',
                     'params' : {'filtration' : {'min_length' : self.minl,
                     'max_length' : self.maxl,  
-                    'readtype' : self.type},
-                    'quality_cons' : int(self.qual), 
+                    'readtype' : self.type}, 
                     'threading' : int(self.thread), 
                     'amorce_Reverse' : self.amorce }}
         

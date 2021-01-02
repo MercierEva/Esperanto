@@ -7,14 +7,13 @@ checkpoint filtration :
         min_length = config["params"]["filtration"]["min_length"],
         max_length = config["params"]["filtration"]["max_length"],
         rd = config["params"]["filtration"]["readtype"], 
-        qual = config["params"]["quality_cons"], 
         folder = config["folder"]
     threads : config["params"]["threading"]
     conda: "envs/nanofilt.yaml"  
     message : 
         "The filtration between {params.min_length} and {params.max_length} on a variable quality score according to the samples is launched."
     shell: """
-        python scripts/py_scripts/run_filtration.py {input.ech} {params.min_length} {params.max_length} {params.rd} {params.qual} {wildcards.sample} {output.files} {params.folder} 
+        python scripts/py_scripts/run_filtration.py {input.ech} {params.min_length} {params.max_length} {params.rd} {wildcards.sample} {output.files} {params.folder} 
     """
 
 
@@ -194,7 +193,8 @@ rule aggregated:
         filesCheck
     output: 
         config["folder"]+"07_stats/Temp/{sample}_finished.temp"
-    threads: config["params"]["threading"]
+    threads:
+        config["params"]["threading"]
     run:
         if len(input) > 1:
             with open(config["folder"]+"All_fastas.fasta", "a+") as filefinal:
@@ -202,7 +202,7 @@ rule aggregated:
                     filefinal.write(file.read())
             
             with open(config["folder"]+ "All_Consensus_fastas.fasta", "a+") as filefinal:
-                with open(config["folder"]+"06_seq_inform/"+wildcards.sample+"_SCAN.fa"),"r") as file:
+                with open(config["folder"]+"06_seq_inform/"+wildcards.sample+"_SCAN.fa","r") as file:
                     filefinal.write(file.read())
                 
             with open(config["folder"] + "ReportStatistics.tsv", "a+") as filefinal:
