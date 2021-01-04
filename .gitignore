@@ -1,4 +1,4 @@
-workflow/.snakemake
+workflow/.snakemake/
 workflow/WorkingSpace*
 workflow/log/
 datas/
