@@ -149,26 +149,23 @@ class Listbook(wx.Listbook):
         st1 = wx.StaticText(self.panelpage2, label=txt1)
         loadButton = wx.Button(self.panelpage2, wx.ID_ANY, label='fastq.gz', size=((100,30)))
         loadButton.SetBackgroundColour('#0fb471')
-        hboxstt1.Add(st1, 0, wx.EXPAND | wx.ALL,  border=10)
-        hboxstt1.Add(loadButton, 0, wx.ALIGN_CENTER_HORIZONTAL )
+        hboxstt1.Add(st1, 0, wx.EXPAND | wx.LEFT | wx.RIGHT | wx.TOP,  border=15)
+        hboxstt1.Add(loadButton, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.TOP, 10 )
         sttBox.Add(hboxstt1, 0, wx.EXPAND | wx.ALL , border=10)
         
-        stname_folder = wx.StaticText(self.panelpage2, wx.ID_ANY, label='Name of working folder : ')
-        sttBox.Add(stname_folder, 0, wx.EXPAND | wx.LEFT , border=20)
-
         hboxstt2 = wx.BoxSizer(wx.HORIZONTAL)
-        self.ctrl_name_folder = wx.TextCtrl(self.panelpage2, wx.ID_ANY, size=((200,30)))
+        stname_folder = wx.StaticText(self.panelpage2, wx.ID_ANY, label='Name of working folder : ')
+        hboxstt2.Add(stname_folder, 0, wx.EXPAND | wx.ALIGN_LEFT | wx.LEFT|wx.TOP|wx.BOTTOM, border=15)   
+        self.ctrl_name_folder = wx.TextCtrl(self.panelpage2, wx.ID_ANY, size=((180,30)))
         timestr = time.strftime("%Y%m%d") 
         self.ctrl_name_folder.SetValue('WorkingSpace_' + timestr)
-        hboxstt2.Add(self.ctrl_name_folder, 0, wx.ALL , 10)
-
-        self.killbutton=wx.Button(self.panelpage2, wx.ID_ANY, label="KILL Process", size=((100,30)))
+        hboxstt2.Add(self.ctrl_name_folder, 0, wx.LEFT | wx.TOP , 10)
+        self.killbutton=wx.Button(self.panelpage2, wx.ID_ANY, label="KILL Process", size=((110,30)))
         self.killbutton.SetBackgroundColour('#b40f52')
-        hboxstt2.Add(self.killbutton, 0, wx.LEFT | wx.RIGHT | wx.ALL, border=10 )
+        hboxstt2.Add(self.killbutton, 0, wx.LEFT | wx.TOP, 10)
 
         sttBox.Add(hboxstt2, 0, wx.EXPAND | wx.ALL , border=10)
-
-        
+    
         sttSizer.Add(sttBox, 0, wx.EXPAND | wx.ALIGN_CENTER_HORIZONTAL)
 
         stt2 = wx.StaticBox(self.panelpage2, 0, "Step 2")
