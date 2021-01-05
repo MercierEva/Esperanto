@@ -14,7 +14,9 @@ import wx.lib.agw.genericmessagedialog as GMD
 import time
 import re
 import gzip
-import signal
+import glob
+import threading
+import queue
 
 path_to_home = os.path.expanduser('~')
 path_to_local = os.path.join(path_to_home + '/.local')
@@ -106,7 +108,7 @@ class Listbook(wx.Listbook):
         self.interval= self.ctrl_param_interval.GetValue()
 
         self.buttonexe1 = wx.Button(self.panelpage1, label="Show histograms of lengths of data loading", size=(400, 25))
-        self.buttonexe1.SetBackgroundColour('#9EA3FF')
+        self.buttonexe1.SetBackgroundColour('#f5d45e')
         
         hboxP1_2.Add(self.buttonexe1, 1, wx.LEFT, 20)
 
@@ -138,96 +140,94 @@ class Listbook(wx.Listbook):
         vboxPanel2 = wx.BoxSizer(wx.VERTICAL)
         hboxssts = wx.BoxSizer(wx.HORIZONTAL)
 
-        stt = wx.StaticBox(self.panelpage2, 1, "Step 1")
-        sttSizer = wx.StaticBoxSizer(stt, wx.VERTICAL )
+        stt = wx.StaticBox(self.panelpage2, 0, "Step 1")
+        sttSizer = wx.StaticBoxSizer(stt, wx.VERTICAL)
         sttBox = wx.BoxSizer(wx.VERTICAL)
 
-        vboxtext_fastq = wx.BoxSizer(wx.VERTICAL)
+        hboxstt1 = wx.BoxSizer(wx.HORIZONTAL)
         txt1 = 'Click to select archives of input fastq files :'
         st1 = wx.StaticText(self.panelpage2, label=txt1)
-        loadButton = wx.Button(self.panelpage2, wx.ID_ANY, label='fastq.gz', size=((150, 25)))
-        vboxtext_fastq.Add(st1, 0, wx.EXPAND | wx.LEFT | wx.RIGHT, border=5)
-        vboxtext_fastq.Add(loadButton, 0, wx.EXPAND | wx.ALL, border= 5)
-            
-        sttBox.Add(vboxtext_fastq, 0, wx.EXPAND | wx.ALL, border = 5)
+        loadButton = wx.Button(self.panelpage2, wx.ID_ANY, label='fastq.gz', size=((100,30)))
+        loadButton.SetBackgroundColour('#0fb471')
+        hboxstt1.Add(st1, 0, wx.EXPAND | wx.ALL,  border=10)
+        hboxstt1.Add(loadButton, 0, wx.ALIGN_CENTER_HORIZONTAL )
+        sttBox.Add(hboxstt1, 0, wx.EXPAND | wx.ALL , border=10)
         
         stname_folder = wx.StaticText(self.panelpage2, wx.ID_ANY, label='Name of working folder : ')
-        self.ctrl_name_folder = wx.TextCtrl(self.panelpage2, wx.ID_ANY)
+        sttBox.Add(stname_folder, 0, wx.EXPAND | wx.LEFT , border=20)
+
+        hboxstt2 = wx.BoxSizer(wx.HORIZONTAL)
+        self.ctrl_name_folder = wx.TextCtrl(self.panelpage2, wx.ID_ANY, size=((200,30)))
         timestr = time.strftime("%Y%m%d") 
         self.ctrl_name_folder.SetValue('WorkingSpace_' + timestr)
+        hboxstt2.Add(self.ctrl_name_folder, 0, wx.ALL , 10)
 
-        sttBox.Add(stname_folder, 0, wx.ALL, 2)
-        sttBox.Add(self.ctrl_name_folder, 1, wx.ALL | wx.EXPAND, 2)
+        self.killbutton=wx.Button(self.panelpage2, wx.ID_ANY, label="KILL Process", size=((100,30)))
+        self.killbutton.SetBackgroundColour('#b40f52')
+        hboxstt2.Add(self.killbutton, 0, wx.LEFT | wx.RIGHT | wx.ALL, border=10 )
 
-        self.killbutton=wx.Button(self.panelpage2, wx.ID_ANY, label="KILL Process", size=((100,25)))
-        sttBox.Add(self.killbutton, 1, wx.ALL | wx.EXPAND, 2)
-        sttSizer.Add(sttBox, 0, wx.EXPAND | wx.ALL, border = 5)
+        sttBox.Add(hboxstt2, 0, wx.EXPAND | wx.ALL , border=10)
 
-        stt2 = wx.StaticBox(self.panelpage2, 1, "Step 2")
+        
+        sttSizer.Add(sttBox, 0, wx.EXPAND | wx.ALIGN_CENTER_HORIZONTAL)
+
+        stt2 = wx.StaticBox(self.panelpage2, 0, "Step 2")
         stt2Sizer = wx.StaticBoxSizer(stt2, wx.VERTICAL)
         stt2Box1 = wx.BoxSizer(wx.VERTICAL)
 
         stt2boxlength = wx.BoxSizer(wx.HORIZONTAL)      
-        txt_minl = wx.StaticText(self.panelpage2, label="Minimum length : ")
+        txt_minl = wx.StaticText(self.panelpage2, label="Minimum length : ", style = wx.ALIGN_CENTRE)
         self.ctrl_minl = wx.TextCtrl(self.panelpage2, wx.ID_ANY, size=((50,20)))
-        txt_maxl = wx.StaticText(self.panelpage2, label="Maximum length : ")
+        txt_maxl = wx.StaticText(self.panelpage2, label="Maximum length : ",style = wx.ALIGN_CENTRE)
         self.ctrl_maxl = wx.TextCtrl(self.panelpage2, wx.ID_ANY, size=((50,20)))
-        txt_threading = wx.StaticText(self.panelpage2, label="Threads :")
-        self.ctrl_thread = wx.TextCtrl(self.panelpage2, wx.ID_ANY, size=((50,20)))
-        stt2boxlength.Add(txt_minl, 0, wx.ALL , 5)
-        stt2boxlength.Add(self.ctrl_minl, 0, wx.ALL , 5)
-        stt2boxlength.AddSpacer(10)
-        stt2boxlength.Add(txt_maxl, 0,  wx.ALL , 5)
-        stt2boxlength.Add(self.ctrl_maxl, 0,  wx.ALL, 5)
+
+        stt2boxlength.Add(txt_minl, 0, wx.ALL|wx.EXPAND|wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_CENTER_HORIZONTAL, 5)
+        stt2boxlength.Add(self.ctrl_minl, 0,wx.ALL|wx.EXPAND|wx.ALIGN_CENTER_VERTICAL , 5)
+        stt2boxlength.AddStretchSpacer()
+        stt2boxlength.Add(txt_maxl,  0,wx.ALL|wx.EXPAND|wx.ALIGN_CENTER_VERTICAL| wx.ALIGN_CENTER_HORIZONTAL, 5)
+        stt2boxlength.Add(self.ctrl_maxl, 0,wx.ALL|wx.EXPAND|wx.ALIGN_CENTER_VERTICAL, 5)
+        stt2boxlength.AddStretchSpacer()
 
 
         stt2boxquality = wx.BoxSizer(wx.HORIZONTAL)
-        txt_type = wx.StaticText(self.panelpage2, label="Read Type : ")
-        self.ctrl_type = wx.ComboBox(self.panelpage2, wx.ID_ANY, style=wx.CB_READONLY, choices=["1D", "2D", "1D2"])
+        txt_type = wx.StaticText(self.panelpage2, label="Read Type : ", style=wx.ALIGN_CENTRE)
+        self.ctrl_type = wx.ComboBox(self.panelpage2, wx.ID_ANY, style=wx.CB_READONLY, choices=["1D", "2D", "1D2"], size=((60,20)))
         self.ctrl_type.SetValue("1D")
+
+        txt_minimum_content= wx.StaticText(self.panelpage2, label="Min content (filtration) :")
+        self.ctrl_min_cont = wx.TextCtrl(self.panelpage2, wx.ID_ANY, size=((40,20)))
+        self.ctrl_min_cont.SetValue('75')
+        txt_threading = wx.StaticText(self.panelpage2, label="Threads :",style = wx.ALIGN_CENTRE)
+        self.ctrl_thread = wx.TextCtrl(self.panelpage2, wx.ID_ANY, size=((30,20)))
         
-        stt2boxquality.Add(txt_type, wx.ID_ANY, wx.ALL, 10)
-        stt2boxquality.Add(self.ctrl_type, wx.ID_ANY, wx.ALL, 5)
-        stt2boxquality.AddSpacer(20)
-        stt2boxquality.Add(txt_threading, wx.ID_ANY,  wx.ALL, 10)
-        stt2boxquality.Add(self.ctrl_thread,wx.ID_ANY, wx.ALL, 10)
-        
+        stt2boxquality.Add(txt_type, 0,wx.ALL|wx.EXPAND|wx.ALIGN_CENTER_VERTICAL| wx.ALIGN_CENTER_HORIZONTAL, 5)
+        stt2boxquality.Add(self.ctrl_type, 0, wx.ALL|wx.EXPAND|wx.ALIGN_CENTER_VERTICAL, 5)
+        stt2boxquality.Add(txt_minimum_content, 0,wx.ALL|wx.EXPAND|wx.ALIGN_CENTER_VERTICAL| wx.ALIGN_CENTER_HORIZONTAL, 5)
+        stt2boxquality.Add(self.ctrl_min_cont, 0,wx.ALL|wx.EXPAND|wx.ALIGN_CENTER_VERTICAL, 5)
+        stt2boxquality.Add(txt_threading, 0,wx.ALL|wx.EXPAND|wx.ALIGN_CENTER_VERTICAL| wx.ALIGN_CENTER_HORIZONTAL, 5)
+        stt2boxquality.Add(self.ctrl_thread, 0, wx.ALL|wx.EXPAND|wx.ALIGN_CENTER_VERTICAL, 5)
+
 
         stt2boxamorceR = wx.BoxSizer(wx.HORIZONTAL)
-        txt_amorceR = wx.StaticText(self.panelpage2, label="To give the reverse primer (UPPER) : ")
-        self.ctrl_amorce = wx.TextCtrl(self.panelpage2, wx.ID_ANY, size=((150, 25)))
+        txt_amorceR = wx.StaticText(self.panelpage2, label="To give the reverse primer (UPPER) : ", style = wx.ALIGN_CENTRE)
+        self.ctrl_amorce = wx.TextCtrl(self.panelpage2, wx.ID_ANY, size=((250, 20)))
         self.ctrl_amorce.SetValue("")
-        stt2boxamorceR.AddSpacer(5)
-        stt2boxamorceR.Add(txt_amorceR, wx.ID_ANY, wx.ALIGN_CENTER_VERTICAL, 5)
-        stt2boxamorceR.Add(self.ctrl_amorce, wx.ID_ANY, wx.ALL, 5)
+        stt2boxamorceR.Add(txt_amorceR,  0, wx.ALL|wx.EXPAND|wx.ALIGN_CENTER_VERTICAL| wx.ALIGN_CENTER_HORIZONTAL, 5)
+        stt2boxamorceR.Add(self.ctrl_amorce, 0, wx.ALL|wx.EXPAND, 5)
 
-        stt2Box1.AddSpacer(5)
-        stt2Box1.Add(stt2boxlength,0 , wx.EXPAND, border=5)
-        stt2Box1.AddSpacer(5)
-        stt2Box1.Add(stt2boxquality,0, wx.EXPAND, border=5)
-        stt2Box1.AddSpacer(5)
-        stt2Box1.Add(stt2boxamorceR, 0, wx.EXPAND, border=5)
+        stt2Box1.Add(stt2boxlength ,0, wx.ALL | wx.ALIGN_CENTER_HORIZONTAL | wx.EXPAND, border=5)
+        stt2Box1.Add(stt2boxquality,0,wx.ALL | wx.ALIGN_CENTER_HORIZONTAL | wx.EXPAND, border=5)
+        stt2Box1.Add(stt2boxamorceR, 0, wx.ALL | wx.EXPAND, border=5)
 
-        hbox_options=wx.BoxSizer(wx.HORIZONTAL)
-        st_quality_sample = wx.StaticText(self.panelpage2, label="By sample, there is : ")
-        list_options = ['One Specie for one final sequence', 'Multiples species for an OTU table']
-        self.comboBoxOptions = wx.ComboBox(self.panelpage2, wx.ID_ANY, style = wx.CB_DROPDOWN | wx.EXPAND, choices = list_options)
-        self.comboBoxOptions.SetValue('Please, choice here ')
-        hbox_options.AddSpacer(5)
-        hbox_options.Add(st_quality_sample,0, wx.TOP | wx.ALIGN_CENTER_VERTICAL, 5)
-        hbox_options.Add(self.comboBoxOptions, 0, wx.ALL, 5)
-        stt2Box1.AddSpacer(5)
-        stt2Box1.Add(hbox_options)
+        stt2Sizer.Add(stt2Box1, 1, wx.EXPAND | wx.ALL, border = 5)
 
-        stt2Sizer.Add(stt2Box1)
-        hboxssts.AddSpacer(10)
-        hboxssts.Add(sttSizer, wx.ID_ANY, wx.EXPAND | wx.ALL, 5)
-        hboxssts.AddSpacer(5)
-        hboxssts.Add(stt2Sizer,wx.ID_ANY, wx.EXPAND | wx.ALL, 5)
+        hboxssts.Add(sttSizer, 1, wx.EXPAND | wx.ALL, 5)
+        hboxssts.Add(stt2Sizer,1, wx.EXPAND | wx.ALL, 5)
 
-        vboxPanel2.Add(hboxssts, 0, wx.EXPAND | wx.ALL, 5)
-        self.buttonRun = wx.Button(self.panelpage2, wx.ID_ANY, label="Run Pipeline", size=((100,25)))
-        vboxPanel2.Add(self.buttonRun, 0, wx.EXPAND | wx.ALL, 5)
+        vboxPanel2.Add(hboxssts, 1, wx.EXPAND | wx.ALL, 5)
+        self.buttonRun = wx.Button(self.panelpage2, wx.ID_ANY, label="Run Pipeline")
+        self.buttonRun.SetBackgroundColour('#00ff7f')
+        vboxPanel2.Add(self.buttonRun, 0, wx.EXPAND | wx.ALL , 5)
 
         self.minl = self.ctrl_minl.GetValue()
         self.maxl = self.ctrl_maxl.GetValue()
@@ -235,9 +235,10 @@ class Listbook(wx.Listbook):
         self.thread = self.ctrl_thread.GetValue()
         self.amorce = self.ctrl_amorce.GetValue()
         self.folder = self.ctrl_name_folder.GetValue()
+        self.content =self.ctrl_min_cont.GetValue()
 
         self.listarr1 = MyListCtrl(self.panelpage2, -1)
-        vboxPanel2.Add(self.listarr1, 1, wx.EXPAND | wx.ALL, border=5)
+        vboxPanel2.Add(self.listarr1, 2, wx.EXPAND | wx.ALL, border=5)
         dt = FileDrop(self.listarr1)
         self.listarr1.SetDropTarget(dt)
 
@@ -245,15 +246,15 @@ class Listbook(wx.Listbook):
         self.TextCtrlRunSK.SetInsertionPoint(0)
         self.TextCtrlRunSK.SetBackgroundColour(wx.BLACK)
         self.TextCtrlRunSK.SetForegroundColour(wx.WHITE)
-        self.TextCtrlRunSK.AppendText("\n snakemake -F -s SnakeFile --cores 4 --use-conda")
-        vboxPanel2.Add(self.TextCtrlRunSK, 1, wx.EXPAND | wx.ALL, 5)
+        self.TextCtrlRunSK.AppendText("\n Here, the progression of workflow ")
+        vboxPanel2.Add(self.TextCtrlRunSK, 2, wx.EXPAND | wx.ALL, 5)
 
 
         hboxbuttonfinaux=wx.BoxSizer(wx.HORIZONTAL)
 
         etiq_button_otu = " Compute statistic results of workflow "
         self.buttonLoadOtuTable = wx.Button(self.panelpage2, -1, label=etiq_button_otu)
-        self.buttonLoadOtuTable.SetBackgroundColour("#66ffc2")
+        self.buttonLoadOtuTable.SetBackgroundColour('#f5d45e')
         hboxbuttonfinaux.Add(self.buttonLoadOtuTable, wx.ID_ANY, wx.EXPAND | wx.ALL, 5)
 
         vboxPanel2.Add(hboxbuttonfinaux, 0, wx.EXPAND | wx.ALL , 5)
@@ -281,6 +282,8 @@ class Listbook(wx.Listbook):
         self.thread = self.ctrl_thread.GetValue()
         self.amorce = self.ctrl_amorce.GetValue()
         self.folder = self.ctrl_name_folder.GetValue()
+        self.content =self.ctrl_min_cont.GetValue()
+
         event.Skip()
     
     def IncludeFiles(self, event, array):
@@ -355,7 +358,7 @@ class Listbook(wx.Listbook):
 
     def fill_config_snakemake(self):
 
-        path_to_config = "config_wf.yaml"
+        path_to_config = "workflow/config_wf.yaml"
         i=0
         dico_yaml = {}
         while i < self.listarr1.GetItemCount():
@@ -366,12 +369,13 @@ class Listbook(wx.Listbook):
             i += 1
 
         dict_file = {'samples': dico_yaml , 
-                    'folder' : self.folder+'/',
+                    'folder' : 'workflow/' +self.folder+'/',
                     'params' : {'filtration' : {'min_length' : self.minl,
                     'max_length' : self.maxl,  
-                    'readtype' : self.type}, 
-                    'threading' : int(self.thread), 
-                    'amorce_Reverse' : self.amorce }}
+                    'readtype' : self.type, 
+                    'min_content' : int(self.content)}, 
+                    'threading' : int(self.thread)-1, 
+                    'amorce_Reverse' : self.amorce}}
         
         with open(path_to_config, 'w') as file:
             yaml.dump(dict_file, file, default_flow_style=False, sort_keys=False)
@@ -437,13 +441,12 @@ class MyFrame(wx.Frame):
         styleicon.Rescale(20, 20)
         icon = styleicon.ConvertToBitmap()
 
-
         self.SetIcon(wx.Icon(icon)) 
         self.listbook = Listbook(self)
         self.listbook.Children[0].SetBackgroundColour('#e6e6ff') 
 
         self.listbook.SetBackgroundColour('#93c2cf')
-        self.listbook.buttonexe1.Bind(wx.EVT_BUTTON, self.generateHisto)
+        self.listbook.buttonexe1.Bind(wx.EVT_BUTTON, lambda event: self.running_treading(event, self.generateHisto))
         self.listbook.buttonRun.Bind(wx.EVT_BUTTON, self.Running_Snakemake)
         self.listbook.killbutton.Bind(wx.EVT_BUTTON, self.kill_process)
 
@@ -454,17 +457,13 @@ class MyFrame(wx.Frame):
         self.sizer.Add(self.text1, 1, wx.EXPAND | wx.ALL, 5)
         self.sizer.Add(self.progress_bar, 1, wx.EXPAND | wx.LEFT | wx.BOTTOM, 5)
         self.statusbar.SetSizer(self.sizer)
-        self.progress_bar.SetRange(50)
+        self.progress_bar.SetRange(100)
         self.progress_bar.SetValue(0)
 
-        self.Layout()
     
-
     def generateHisto(self, event):
         self.text1.SetLabelText("Started")     
         self.progress_bar.Show()  
-        self.progress_bar.Pulse() 
-        wx.GetApp().Yield()
         self.listbook.SetSelection(1) 
  
         dico_data_input = {}
@@ -496,79 +495,69 @@ class MyFrame(wx.Frame):
             self.text1.SetLabelText("Finished")
             self.progress_bar.Hide()
             
-        event.Skip()  
 
     def kill_process(self, event):
-        os.kill(self.process_sk.pid, signal.SIGINT)
+        self.process_sk.terminate()
         self.text1.SetLabelText("Process killed !")
-
     
+    def read_output(self, pipe, q):
+        while True:
+            l = pipe.readline() 
+            newoutput = l.decode()  
+            q.put(newoutput)  
+
+
     def Running_Snakemake(self, event):
         try :             
             self.text1.SetLabelText("Started")
             self.progress_bar.Show()
-            self.progress_bar.Pulse()  
-            inputNf1 = 'snakemake -s SnakeFile --cores '+ self.listbook.thread +' --use-conda'
-            inputNf2 = 'snakemake -s SnakeFile2 --cores ' + self.listbook.thread + ' --use-conda'
+            inputNf1 = 'snakemake -s ' + self.workspace + '/workflow/SnakeFile --cores ' + self.listbook.thread +' --use-conda --rerun-incomplete'
             
-            with cd(self.workspace + '/workflow/'):
-                try:
-                    os.remove('.snakemake/locks/*')
-                except FileNotFoundError:
-                    pass
-                try: 
-                    os.mkdir(self.listbook.folder)
-                except FileExistsError:
-                    pass
+            try :
+                dir = '.snakemake/locks'
+                filelist = glob.glob(os.path.join(dir, "*"))
+                for f in filelist:
+                    os.remove(f)
+            except FileNotFoundError:
+                pass
 
-                self.listbook.fill_config_snakemake()
+            self.listbook.fill_config_snakemake()
 
-                if self.listbook.comboBoxOptions.GetSelection() == 0:
-                    self.process_sk = subprocess.Popen(inputNf1, shell=True,
-                                                stdout = subprocess.PIPE,
-                                                stderr = subprocess.STDOUT)
-                else :
-                    self.process_sk = subprocess.Popen(inputNf2, shell=True,
-                                                stdout = subprocess.PIPE,
-                                                stderr = subprocess.STDOUT)
-
-                while True:
-                    output = self.process_sk.stdout.readline()
-                    try:
-                        wx.GetApp().Yield()      
-                    except: 
-                        pass      
-                    if output == '' and self.process_sk.poll() is not None:
-                        break
-                    if output:   
-                        newoutput = output.decode()
-                        self.listbook.TextCtrlRunSK.AppendText("\n" + str(newoutput))                
-
-                    if self.process_sk.poll() == 0 :
-                        self.text1.SetLabelText("Finished")
-                        self.progress_bar.Hide()
-                        break
-                    
-            event.Skip()
+            self.process_sk = subprocess.Popen(inputNf1, shell=True,
+                                            stdout = subprocess.PIPE,
+                                            stderr = subprocess.STDOUT)
+            
+            pa_q = queue.Queue()
         
+            pa_t = threading.Thread(target=self.read_output, args=(self.process_sk.stdout, pa_q))
+            pa_t.daemon = True
+            pa_t.start()
+
+
+            while True: 
+                self.update_GUI()
+                self.process_sk.poll()
+                if self.process_sk.returncode is not None:
+                    break
+                try:
+                    l = pa_q.get(False)
+                    self.listbook.TextCtrlRunSK.AppendText("\n" + str(l)) 
+                except queue.Empty:
+                    pass   
+                if self.process_sk.poll() == 0 :
+                    self.text1.SetLabelText("Finished")
+                    self.progress_bar.Hide()
+
         except ValueError :
             dlg = ExceptionDialog("Please fill in the fields correctly !")
             dlg.ShowModal()
             if dlg.ShowModal == wx.ID_OK or wx.ID_CANCEL:
-                dlg.Destroy()    
-            
-                         
-class cd(object):
-    """Context manager for changing the current working directory"""
-    def __init__(self, newPath):
-        self.newPath = os.path.expanduser(newPath)
+                dlg.Destroy()  
 
-    def __enter__(self):
-        self.savedPath = os.getcwd()
-        os.chdir(self.newPath)
-
-    def __exit__(self, etype, value, traceback):
-        os.chdir(self.savedPath)
+        
+    def update_GUI(self) : 
+        wx.GetApp().Yield()
+        self.progress_bar.Pulse()
 
 class ExceptionDialog(GMD.GenericMessageDialog):
     """"""

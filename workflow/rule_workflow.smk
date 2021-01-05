@@ -7,16 +7,15 @@ checkpoint filtration :
         min_length = config["params"]["filtration"]["min_length"],
         max_length = config["params"]["filtration"]["max_length"],
         rd = config["params"]["filtration"]["readtype"], 
+        content = config["params"]["filtration"]["min_content"],
         folder = config["folder"]
     threads : config["params"]["threading"]
     conda: "envs/nanofilt.yaml"  
     message : 
         "The filtration between {params.min_length} and {params.max_length} on a variable quality score according to the samples is launched."
     shell: """
-        python scripts/py_scripts/run_filtration.py {input.ech} {params.min_length} {params.max_length} {params.rd} {wildcards.sample} {output.files} {params.folder} 
+        python workflow/scripts/py_scripts/run_filtration.py {input.ech} {params.min_length} {params.max_length} {params.rd} {wildcards.sample} {output.files} {params.folder} {params.content}
     """
-
-
 
 rule alt_setting :
     input:
@@ -53,7 +52,7 @@ rule cluster_to_consensus :
         " - Exclusion of reads that are too different"
         " - Consensus building"   
     shell : """
-        bash scripts/sh_scripts/run_vsearch.sh {input.fasta} {threads} {wildcards.sample} {params.cluster_dir} {output[0]} {params.folder}
+        bash workflow/scripts/sh_scripts/run_vsearch.sh {input.fasta} {threads} {wildcards.sample} {params.cluster_dir} {output[0]} {params.folder}
         """
 
 
@@ -117,7 +116,7 @@ rule multialignment :
     conda: "envs/VC.yaml"
     message: "Multialignment"
     shell:"""
-        bash scripts/sh_scripts/run_ngmlr.sh {threads} {input.ref} {params.cluster_dir} {output}
+        bash workflow/scripts/sh_scripts/run_ngmlr.sh {threads} {input.ref} {params.cluster_dir} {output}
     """
 
 rule samtools :
@@ -146,7 +145,7 @@ rule variant_calling:
         folder = config["folder"]
     message : "Variant calling"
     shell:"""
-        bash scripts/sh_scripts/run_varscan.sh {input} {params.folder}05_varscan/{wildcards.sample}_SNP.tsv {params.folder}05_varscan/{wildcards.sample}_INDEL.tsv {output} {wildcards.sample} {params.folder} 
+        bash workflow/scripts/sh_scripts/run_varscan.sh {input} {params.folder}05_varscan/{wildcards.sample}_SNP.tsv {params.folder}05_varscan/{wildcards.sample}_INDEL.tsv {output} {wildcards.sample} {params.folder} 
     """
 
 rule consensus : 
@@ -185,7 +184,7 @@ rule report :
     message : 
         "Creating ReportStatistics" 
     shell : """
-        python scripts/py_scripts/report_stats.py {wildcards.sample} {params.folder} {output[0]}
+        python workflow/scripts/py_scripts/report_stats.py {wildcards.sample} {params.folder} {output[0]}
     """
 
 rule aggregated: 

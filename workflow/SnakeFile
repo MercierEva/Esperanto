@@ -1,11 +1,8 @@
 # -*- coding: utf-8 -*-
-import os
 import subprocess
 import os
-from Bio import SeqIO
 import re
 import gzip
-import time
 import pandas as pd
 
 def count_seq(input_file):
@@ -17,14 +14,14 @@ def count_seq(input_file):
 def filesCheck(wildcards):
     files = checkpoints.filtration.get(**wildcards).output[0]
     pass_list=[]
-    if int(count_seq(files)) > 75 :           
+    if int(count_seq(files)) > int(config["params"]["filtration"]["min_content"]):           
         pass_list = expand(config["folder"]+"07_stats/report_{sample}_final.tsv", sample= wildcards.sample ) 
         return pass_list
     else:     
         pass_list = expand(config["folder"]+"07_stats/Temp/{sample}_state.temp", sample=wildcards.sample)
         return pass_list
 
-configfile : "config_wf.yaml"
+configfile : "workflow/config_wf.yaml"
 include: "rule_workflow.smk"
 
 onsuccess:

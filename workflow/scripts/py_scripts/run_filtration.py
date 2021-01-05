@@ -11,6 +11,7 @@ rd=sys.argv[4]
 sample=sys.argv[5]
 output=sys.argv[6]
 folder=sys.argv[7]
+min_content=sys.argv[8]
 file_interm=str(folder) + "01_nanofilt/" + str(sample) + "_filt.fastq.gz"
 
 def count_seq(input_file):
@@ -30,7 +31,7 @@ for q in range(17, 6, -1) :
     unzipping=subprocess.run(["gunzip", "-c", str(input_file)] , check=True, capture_output=True)
     filtering = subprocess.run(["NanoFilt", "-l", str(min_length),"--maxlength",str(max_length),"-q",str(q),"--readtype", str(rd)], input=unzipping.stdout, capture_output=True)
     subprocess.run(["gzip"], input=filtering.stdout, stdout=gzip.open(file_interm, 'wb'))
-    if count_seq(file_interm) > 75 : 
+    if count_seq(file_interm) > int(min_content): 
         break
     else:
         continue

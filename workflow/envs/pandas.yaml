@@ -1,8 +1,0 @@
-channels:
-  - anaconda
-  - omnia
-  - bioconda
-dependencies:
-  - pandas
-  - subprocess32
-  - samtools
