@@ -550,7 +550,8 @@ class MyFrame(wx.Frame):
                 if self.process_sk.returncode is not None or self.process_sk.stdout== '' :
                     break
             
-            self.text1.SetLabelText("Finished")                
+            self.text1.SetLabelText("Finished") 
+            self.progress_bar.Hide()               
 
         except ValueError :
             dlg = ExceptionDialog("Please fill in the fields correctly !")
