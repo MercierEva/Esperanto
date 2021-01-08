@@ -431,7 +431,7 @@ class FileDrop(wx.FileDropTarget):
 class MyFrame(wx.Frame):
 
     def __init__(self, parent, title):
-        wx.Frame.__init__(self, parent, title=title,  size=(1200,700))
+        wx.Frame.__init__(self, parent, title=title,  size=(1300,700))
         sys.excepthook = MyExceptionHook
         self.workspace = os.getcwd()
         styleicon=wx.Image(self.workspace + "/images/clipart1150338.png")
@@ -443,7 +443,7 @@ class MyFrame(wx.Frame):
         self.listbook.Children[0].SetBackgroundColour('#e6e6ff') 
 
         self.listbook.SetBackgroundColour('#93c2cf')
-        self.listbook.buttonexe1.Bind(wx.EVT_BUTTON, lambda event: self.running_treading(event, self.generateHisto))
+        self.listbook.buttonexe1.Bind(wx.EVT_BUTTON, self.generateHisto)
         self.listbook.buttonRun.Bind(wx.EVT_BUTTON, self.Running_Snakemake)
         self.listbook.killbutton.Bind(wx.EVT_BUTTON, self.kill_process)
 
@@ -461,6 +461,7 @@ class MyFrame(wx.Frame):
     def generateHisto(self, event):
         self.text1.SetLabelText("Started")     
         self.progress_bar.Show()  
+        self.progress_bar.Pulse()
         self.listbook.SetSelection(1) 
  
         dico_data_input = {}
@@ -495,26 +496,32 @@ class MyFrame(wx.Frame):
 
     def kill_process(self, event):
         self.process_sk.terminate()
+        self.process_sk.returncode = -1 
         self.text1.SetLabelText("Process killed !")
     
     def read_output(self, pipe, q):
         while True:
             l = pipe.readline() 
-            newoutput = l.decode()  
-            q.put(newoutput)  
-
+            if l :
+                newoutput = l.decode()  
+                q.put(newoutput)  
 
     def Running_Snakemake(self, event):
         try :             
             self.text1.SetLabelText("Started")
             self.progress_bar.Show()
-            inputNf1 = 'snakemake -s ' + self.workspace + '/workflow/SnakeFile --cores ' + self.listbook.thread +' --use-conda --rerun-incomplete'
+            inputNf1 = 'snakemake -s ' + self.workspace + '/workflow/SnakeFile --cores ' + self.listbook.thread +' --use-conda'
             
             try :
                 dir = '.snakemake/locks'
+                dir2= '.snakemake/incomplete'
                 filelist = glob.glob(os.path.join(dir, "*"))
+                filelist2 = glob.glob(os.path.join(dir2, "*"))
                 for f in filelist:
                     os.remove(f)
+                for f in filelist2:
+                    os.remove(f)
+
             except FileNotFoundError:
                 pass
 
@@ -530,20 +537,20 @@ class MyFrame(wx.Frame):
             pa_t.daemon = True
             pa_t.start()
 
-
             while True: 
-                self.update_GUI()
+                self.progress_bar.Pulse()
+                wx.GetApp().Yield()
                 self.process_sk.poll()
-                if self.process_sk.returncode is not None:
-                    break
                 try:
                     l = pa_q.get(False)
                     self.listbook.TextCtrlRunSK.AppendText("\n" + str(l)) 
                 except queue.Empty:
-                    pass   
-                if self.process_sk.poll() == 0 :
-                    self.text1.SetLabelText("Finished")
-                    self.progress_bar.Hide()
+                    pass
+
+                if self.process_sk.returncode is not None or self.process_sk.stdout== '' :
+                    break
+            
+            self.text1.SetLabelText("Finished")                
 
         except ValueError :
             dlg = ExceptionDialog("Please fill in the fields correctly !")
@@ -551,10 +558,7 @@ class MyFrame(wx.Frame):
             if dlg.ShowModal == wx.ID_OK or wx.ID_CANCEL:
                 dlg.Destroy()  
 
-        
-    def update_GUI(self) : 
-        wx.GetApp().Yield()
-        self.progress_bar.Pulse()
+        event.Skip()
 
 class ExceptionDialog(GMD.GenericMessageDialog):
     """"""

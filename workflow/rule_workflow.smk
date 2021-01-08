@@ -119,21 +119,40 @@ rule multialignment :
         bash workflow/scripts/sh_scripts/run_ngmlr.sh {threads} {input.ref} {params.cluster_dir} {output}
     """
 
-rule samtools :
+rule samtools view :
     input : 
-        ref=config["folder"]+"03_porechop/{sample}_ont.fasta",
         samfile=config["folder"]+"04_multialignment/{sample}_MSA.sam"
     output : 
-        config["folder"]+"04_multialignment/{sample}.pileup"
+        config["folder"]+ "04_multialignment/{sample}_MSA.bam"
+    conda: "envs/VC.yaml"
+    params : folder = config["folder"]
+    message:"sam_to_bam"
+    shell:"""
+        samtools view -S -b {input.samfile} > {output}
+       """
+
+rule samtools_sort :
+    input: config["folder"]+ "04_multialignment/{sample}_MSA.bam"
+    output : config["folder"]+ "04_multialignment/{sample}_MSA.sorted.bam"
+    conda: "envs/VC.yaml"
+    params : folder = config["folder"]
+    message:"sorting bamfile"    
+    shell:"""
+        samtools sort {input} -o {output}
+        """
+
+rule samtools_mpileup :
+    input: 
+        bam = config["folder"]+ "04_multialignment/{sample}_MSA.sorted.bam"
+    output : config["folder"]+"04_multialignment/{sample}.pileup"
     conda: "envs/VC.yaml"
     params : folder = config["folder"]
     message:"bulding pileup file"
     shell:"""
-        samtools view -S -b {input.samfile} > {params.folder}04_multialignment/{wildcards.sample}_MSA.bam
-        samtools sort {params.folder}04_multialignment/{wildcards.sample}_MSA.bam -o {params.folder}04_multialignment/{wildcards.sample}_MSA.sorted.bam
-        samtools index {params.folder}04_multialignment/{wildcards.sample}_MSA.sorted.bam
-        samtools mpileup -f {input.ref} {params.folder}04_multialignment/{wildcards.sample}_MSA.sorted.bam > {output[0]}
-    """
+        samtools index {input.bam}
+        samtools mpileup -f "{params.folder}03_porechop/{wildcards.sample}_ont.fasta" {input.bam} > {output[0]}
+        """
+    
 
 rule variant_calling:
     input : 
@@ -195,7 +214,7 @@ rule aggregated:
     threads:
         config["params"]["threading"]
     run:
-        if len(input) > 1:
+        if input[0].find("final") != -1:
             with open(config["folder"]+"All_fastas.fasta", "a+") as filefinal:
                 with open(config["folder"]+"03_porechop/"+wildcards.sample+"_ont.fasta", "r") as file :
                     filefinal.write(file.read())
