@@ -265,7 +265,7 @@ class Listbook(wx.Listbook):
     
     def Build_OTU_table(self, event):
         try:
-            timestr = time.strftime("%Y%m%d-%H%M%S")
+            timestr = time.strftime("%Y%m%d")
             list_of_files = glob.glob(self.workspace + '/workflow/'+ self.folder +'/07_stats/*final.tsv')
 
             if len(list_of_files) < 2 :
