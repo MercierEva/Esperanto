@@ -264,12 +264,7 @@ class Listbook(wx.Listbook):
         self.panelpage2.Bind(wx.EVT_LIST_ITEM_RIGHT_CLICK, lambda event: self.OnRightDown(event, self.listarr1))
     
     def Build_OTU_table(self, event):
-
-        if self.comboBoxOptions.GetSelection() == 0:
-            subprocess.call(['soffice',  self.workspace + '/workflow/'+ self.folder +'/ReportStatistics.tsv'])
-        else:    
-            subprocess.call(['soffice',  self.workspace + '/workflow/'+ self.folder +'/Table_OTU.tsv'])
-
+        subprocess.call(['soffice',  self.workspace + '/workflow/'+ self.folder +'/ReportStatistics.tsv'])
     
     def Change_name_P2(self, event):
 
