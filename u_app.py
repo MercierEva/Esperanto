@@ -266,12 +266,12 @@ class Listbook(wx.Listbook):
     def Build_OTU_table(self, event):
         try:
             timestr = time.strftime("%Y%m%d-%H%M%S")
-            list_of_files = glob.glob(self.workspace + '/workflow/'+ self.folder +'/05_stats/*final.tsv')
+            list_of_files = glob.glob(self.workspace + '/workflow/'+ self.folder +'/07_stats/*final.tsv')
 
             if len(list_of_files) < 2 :
                 try :
                     for one_file in list_of_files :
-                        shutil.copy(one_file,  self.workspace + '/workflow/' + self.folder + '/05_stats/StatisticReport' + timestr + '.tsv')
+                        shutil.copy(one_file,  self.workspace + '/workflow/' + self.folder + '/07_stats/StatisticReport' + timestr + '.tsv')
                 except :
                     pass
             else :
@@ -285,11 +285,11 @@ class Listbook(wx.Listbook):
 
                 frame = pd.concat(li, axis=0, ignore_index=True)
 
-                frame.to_csv( self.workspace + '/workflow/'+ self.folder +'/05_stats/StatisticReport' + timestr + '.tsv', sep='\t', header= True)
+                frame.to_csv( self.workspace + '/workflow/'+ self.folder +'/07_stats/StatisticReport' + timestr + '.tsv', sep='\t', header= True)
 
 
 
-            subprocess.call(['soffice',  self.workspace + '/workflow/'+ self.folder +'/05_stats/StatisticReport' + timestr + '.tsv'])
+            subprocess.call(['soffice',  self.workspace + '/workflow/'+ self.folder +'/07_stats/StatisticReport' + timestr + '.tsv'])
 
 
 
