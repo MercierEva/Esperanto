@@ -264,18 +264,28 @@ class Listbook(wx.Listbook):
         self.panelpage2.Bind(wx.EVT_LIST_ITEM_RIGHT_CLICK, lambda event: self.OnRightDown(event, self.listarr1))
     
     def Build_OTU_table(self, event):
+<<<<<<< HEAD
     
         try:
+=======
+        try:
+            timestr = time.strftime("%Y%m%d")
+>>>>>>> e4db37b043c26c58bddc74b84b99261354c0f876
             list_of_files = glob.glob(self.workspace + '/workflow/'+ self.folder +'/07_stats/*final.tsv')
 
             if len(list_of_files) < 2 :
                 try :
                     for one_file in list_of_files :
+<<<<<<< HEAD
                         shutil.copy(one_file,  self.workspace + '/workflow/' + self.folder + '/StatisticReport.tsv')
+=======
+                        shutil.copy(one_file,  self.workspace + '/workflow/' + self.folder + '/07_stats/StatisticReport' + timestr + '.tsv')
+>>>>>>> e4db37b043c26c58bddc74b84b99261354c0f876
                 except :
                     pass
             else :
                 li = []
+<<<<<<< HEAD
 
                 for filename in list_of_files:
 
@@ -290,6 +300,22 @@ class Listbook(wx.Listbook):
 
 
             subprocess.call(['soffice',  self.workspace + '/workflow/'+ self.folder +'/StatisticReport.tsv'])
+=======
+
+                for filename in list_of_files:
+
+                    df = pd.read_csv(filename, index_col=None, header=0, sep='\t' )
+
+                    li.append(df)
+
+                frame = pd.concat(li, axis=0, ignore_index=True)
+
+                frame.to_csv( self.workspace + '/workflow/'+ self.folder +'/07_stats/StatisticReport' + timestr + '.tsv', sep='\t', header= True)
+
+
+
+            subprocess.call(['soffice',  self.workspace + '/workflow/'+ self.folder +'/07_stats/StatisticReport' + timestr + '.tsv'])
+>>>>>>> e4db37b043c26c58bddc74b84b99261354c0f876
 
 
 
@@ -298,9 +324,13 @@ class Listbook(wx.Listbook):
             dlg.ShowModal()
             if dlg.ShowModal == wx.ID_OK or wx.ID_CANCEL:
                 dlg.Destroy()
+<<<<<<< HEAD
 
 
    
+=======
+    
+>>>>>>> e4db37b043c26c58bddc74b84b99261354c0f876
     def Change_name_P2(self, event):
 
         self.minl = self.ctrl_minl.GetValue()
