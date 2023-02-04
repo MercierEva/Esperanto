@@ -264,13 +264,43 @@ class Listbook(wx.Listbook):
         self.panelpage2.Bind(wx.EVT_LIST_ITEM_RIGHT_CLICK, lambda event: self.OnRightDown(event, self.listarr1))
     
     def Build_OTU_table(self, event):
-
-        if self.comboBoxOptions.GetSelection() == 0:
-            subprocess.call(['soffice',  self.workspace + '/workflow/'+ self.folder +'/ReportStatistics.tsv'])
-        else:    
-            subprocess.call(['soffice',  self.workspace + '/workflow/'+ self.folder +'/Table_OTU.tsv'])
-
     
+        try:
+            list_of_files = glob.glob(self.workspace + '/workflow/'+ self.folder +'/07_stats/*final.tsv')
+
+            if len(list_of_files) < 2 :
+                try :
+                    for one_file in list_of_files :
+                        shutil.copy(one_file,  self.workspace + '/workflow/' + self.folder + '/StatisticReport.tsv')
+                except :
+                    pass
+            else :
+                li = []
+
+                for filename in list_of_files:
+
+                    df = pd.read_csv(filename, index_col=None, header=0, sep='\t' )
+
+                    li.append(df)
+
+                frame = pd.concat(li, axis=0, ignore_index=True)
+
+                frame.to_csv( self.workspace + '/workflow/'+ self.folder +'/StatisticReport.tsv', sep='\t', header= True)
+
+
+
+            subprocess.call(['soffice',  self.workspace + '/workflow/'+ self.folder +'/StatisticReport.tsv'])
+
+
+
+        except ValueError:
+            dlg = ExceptionDialog("This step requires that the workflow has been completed correctly !")
+            dlg.ShowModal()
+            if dlg.ShowModal == wx.ID_OK or wx.ID_CANCEL:
+                dlg.Destroy()
+
+
+   
     def Change_name_P2(self, event):
 
         self.minl = self.ctrl_minl.GetValue()

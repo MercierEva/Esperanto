@@ -42,32 +42,21 @@ class Report_Stat:
 
     def read_nb_id(self, quality):
         quality=int(quality)
-        if quality == 17 :
-	        nb_id=0.95
-        elif quality == 16 :
-	        nb_id=0.94
-        elif quality == 15 :
-	        nb_id=0.93
-        elif quality == 14 :
-	        nb_id=0.92
-        elif quality == 13 :
-	        nb_id=0.89
-        elif quality == 12 :
-            nb_id=0.87
-        elif quality == 11 : 
-            nb_id=0.83
-        elif quality == 10 :
-            nb_id=0.79
-        elif quality == 9 :
-            nb_id=0.74
-        elif quality == 8 :
-            nb_id=0.68
-        elif quality == 7 :
-            nb_id=0.59
-        elif quality == 6 :
-            nb_id=0.49
-        
-        return nb_id
+        switch={
+            17:0.95,
+            16:0.94,
+            15:0.93,
+            14:0.92,
+            13:0.89,
+            12:0.87,
+            11:0.83,
+            10:0.79,
+            9:0.74,
+            8:0.68,
+            7:0.59,
+            6:0.49
+        }
+        return switch.get(quality, "Invalid input")
     
     def count_seq_cluster(self, sample, folder):
         path = folder + "02_vsearch/PASS/consensus_" + sample +".fasta" 
@@ -82,7 +71,6 @@ class Report_Stat:
         cmd = "samtools depth -a " + folder +"04_multialignment/"+ sample +"_MSA.sorted.bam | awk '{c++;s+=$3}END{print s/c}'"
         proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
         out, err = proc.communicate()
-        print(float(out))
         return float(out)
     
     def length_seq(self, sample, folder):
@@ -99,7 +87,6 @@ class Report_Stat:
         cmd="samtools depth -a " + folder +"04_multialignment/"+ str(sample) +"_MSA.sorted.bam | awk '{c++; if($3>0) total+=1}END{print (total/c)*100}'"
         proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
         out, err = proc.communicate()
-        print(float(out))
         return float(out)
 
     def write_array(self, d, output):

@@ -2,4 +2,5 @@ channels:
   - bioconda
   - anaconda
 dependencies:
-  - ngmlr  
+  - varscan
+  - python

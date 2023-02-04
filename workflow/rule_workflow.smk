@@ -113,7 +113,7 @@ rule multialignment :
     params:
         cluster_dir = config["folder"]+"02_vsearch/{sample}_cluster_"
     threads : config["params"]["threading"]    
-    conda: "envs/VC.yaml"
+    conda: "envs/ngmlr.yaml"
     message: "Multialignment"
     shell:"""
         bash workflow/scripts/sh_scripts/run_ngmlr.sh {threads} {input.ref} {params.cluster_dir} {output}
@@ -124,7 +124,7 @@ rule samtools view :
         samfile=config["folder"]+"04_multialignment/{sample}_MSA.sam"
     output : 
         config["folder"]+ "04_multialignment/{sample}_MSA.bam"
-    conda: "envs/VC.yaml"
+    conda: "envs/samtools.yaml"
     params : folder = config["folder"]
     message:"sam_to_bam"
     shell:"""
@@ -134,7 +134,7 @@ rule samtools view :
 rule samtools_sort :
     input: config["folder"]+ "04_multialignment/{sample}_MSA.bam"
     output : config["folder"]+ "04_multialignment/{sample}_MSA.sorted.bam"
-    conda: "envs/VC.yaml"
+    conda: "envs/samtools.yaml"
     params : folder = config["folder"]
     message:"sorting bamfile"    
     shell:"""
@@ -145,7 +145,7 @@ rule samtools_mpileup :
     input: 
         bam = config["folder"]+ "04_multialignment/{sample}_MSA.sorted.bam"
     output : config["folder"]+"04_multialignment/{sample}.pileup"
-    conda: "envs/VC.yaml"
+    conda: "envs/samtools.yaml"
     params : folder = config["folder"]
     message:"bulding pileup file"
     shell:"""
@@ -159,7 +159,7 @@ rule variant_calling:
         config["folder"]+"04_multialignment/{sample}.pileup"
     output :
         config["folder"]+"05_varscan/{sample}_CNS.tsv"
-    conda : "envs/VC.yaml"
+    conda : "envs/varscan.yaml"
     params: 
         folder = config["folder"]
     message : "Variant calling"
@@ -198,8 +198,6 @@ rule report :
         config["folder"]+"07_stats/report_{sample}_final.tsv"
     params:
         folder=config["folder"]
-    conda:
-        "envs/VC.yaml"
     message : 
         "Creating ReportStatistics" 
     shell : """
@@ -223,7 +221,7 @@ rule aggregated:
                 with open(config["folder"]+"06_seq_inform/"+wildcards.sample+"_SCAN.fa","r") as file:
                     filefinal.write(file.read())
                 
-            with open(config["folder"] + "ReportStatistics.tsv", "a+") as filefinal:
+            with open(config["folder"] + "StatisticReport.tsv", "a+") as filefinal:
                 with open(input[0], "r") as file :
                     if filefinal.tell() == 0 :
                         filefinal.write(file.read())

@@ -57,9 +57,8 @@ def calcul_quality_final(quality, depth):
 
 def calcul(qual):
     prob=10**(-int(qual)/10)
-    print(prob)
     return prob
 
 depth=count_seq_cluster(sys.argv[2], sys.argv[3])
 qual_final=calcul_quality_final(sys.argv[1], depth)
-calcul(qual_final)
+print(round(calcul(qual_final), 5))
