@@ -6,6 +6,7 @@ import gzip
 import yaml
 import subprocess
 import math
+import re
 
 class Report_Stat:
 
@@ -69,14 +70,14 @@ class Report_Stat:
         
     def calcul_mean_read_depth(self, sample, folder):
         cmd = "samtools depth -a " + folder +"04_multialignment/"+ sample +"_MSA.sorted.bam | awk '{c++;s+=$3}END{print s/c}'"
-        proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
+        proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, err = proc.communicate()
-        return float(out)
+        return float(out.decode().split("\n")[0].replace(',', '.'))
     
     def length_seq(self, sample, folder):
         total=0
         input_file=folder+"03_porechop/"+sample+"_ont.fasta"
-        handle = open(input_file, 'rU')       
+        handle = open(input_file, 'r')       
         SeqRecords = SeqIO.parse(handle, 'fasta')
         for rec in SeqRecords:
             Seq = str(rec.seq)
@@ -85,9 +86,9 @@ class Report_Stat:
     
     def calcul_bread_of_coverage(self, sample, folder):
         cmd="samtools depth -a " + folder +"04_multialignment/"+ str(sample) +"_MSA.sorted.bam | awk '{c++; if($3>0) total+=1}END{print (total/c)*100}'"
-        proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
+        proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, err = proc.communicate()
-        return float(out)
+        return float(out.decode().split("\n")[0].replace(',', '.'))
 
     def write_array(self, d, output):
         df = pd.DataFrame(data=d, columns=['Sample', "Quality_Consensus_Final", "QThreshold_1", "Depth_1", "IdentityPercent_2", "Depth_2",  "Mean_Read_Depth", "Breadth_of_Coverage", "Length", "Sequence fasta"])

@@ -1,10 +1,11 @@
 channels:
-  - bioconda
-  - anaconda
   - conda-forge
+  - bioconda
+  - defaults 
+  - anaconda
 dependencies:
-  - biopython
+  - samtools=1.16.1
   - pandas 
   - pyyaml
-  - samtools=1.16.1
-  - subprocess32  
+  - subprocess32 
+  - biopython 

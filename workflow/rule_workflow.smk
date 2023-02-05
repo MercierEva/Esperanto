@@ -198,6 +198,7 @@ rule report :
         config["folder"]+"07_stats/report_{sample}_final.tsv"
     params:
         folder=config["folder"]
+    conda: "envs/report.yaml"
     message : 
         "Creating ReportStatistics" 
     shell : """
