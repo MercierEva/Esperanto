@@ -150,7 +150,7 @@ class Listbook(wx.Listbook):
         loadButton = wx.Button(self.panelpage2, wx.ID_ANY, label='fastq.gz', size=((100,30)))
         loadButton.SetBackgroundColour('#0fb471')
         hboxstt1.Add(st1, 0, wx.EXPAND | wx.LEFT | wx.RIGHT | wx.TOP,  border=15)
-        hboxstt1.Add(loadButton, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.TOP, 10 )
+        hboxstt1.Add(loadButton, 0, wx.TOP, 10 )
         sttBox.Add(hboxstt1, 0, wx.EXPAND | wx.ALL , border=10)
         
         hboxstt2 = wx.BoxSizer(wx.HORIZONTAL)
@@ -166,7 +166,7 @@ class Listbook(wx.Listbook):
 
         sttBox.Add(hboxstt2, 0, wx.EXPAND | wx.ALL , border=10)
     
-        sttSizer.Add(sttBox, 0, wx.EXPAND | wx.ALIGN_CENTER_HORIZONTAL)
+        sttSizer.Add(sttBox, 0, wx.EXPAND | wx.ALL)
 
         stt2 = wx.StaticBox(self.panelpage2, 0, "Step 2")
         stt2Sizer = wx.StaticBoxSizer(stt2, wx.VERTICAL)
@@ -178,11 +178,11 @@ class Listbook(wx.Listbook):
         txt_maxl = wx.StaticText(self.panelpage2, label="Maximum length : ",style = wx.ALIGN_CENTRE)
         self.ctrl_maxl = wx.TextCtrl(self.panelpage2, wx.ID_ANY, size=((50,20)))
 
-        stt2boxlength.Add(txt_minl, 0, wx.ALL|wx.EXPAND|wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_CENTER_HORIZONTAL, 5)
-        stt2boxlength.Add(self.ctrl_minl, 0,wx.ALL|wx.EXPAND|wx.ALIGN_CENTER_VERTICAL , 5)
+        stt2boxlength.Add(txt_minl, 0, wx.ALL|wx.EXPAND, 5)
+        stt2boxlength.Add(self.ctrl_minl, 0,wx.ALL|wx.EXPAND, 5)
         stt2boxlength.AddStretchSpacer()
-        stt2boxlength.Add(txt_maxl,  0,wx.ALL|wx.EXPAND|wx.ALIGN_CENTER_VERTICAL| wx.ALIGN_CENTER_HORIZONTAL, 5)
-        stt2boxlength.Add(self.ctrl_maxl, 0,wx.ALL|wx.EXPAND|wx.ALIGN_CENTER_VERTICAL, 5)
+        stt2boxlength.Add(txt_maxl,  0,wx.ALL|wx.EXPAND, 5)
+        stt2boxlength.Add(self.ctrl_maxl, 0,wx.ALL|wx.EXPAND, 5)
         stt2boxlength.AddStretchSpacer()
 
 
@@ -197,23 +197,23 @@ class Listbook(wx.Listbook):
         txt_threading = wx.StaticText(self.panelpage2, label="Threads :",style = wx.ALIGN_CENTRE)
         self.ctrl_thread = wx.TextCtrl(self.panelpage2, wx.ID_ANY, size=((30,20)))
         
-        stt2boxquality.Add(txt_type, 0,wx.ALL|wx.EXPAND|wx.ALIGN_CENTER_VERTICAL| wx.ALIGN_CENTER_HORIZONTAL, 5)
-        stt2boxquality.Add(self.ctrl_type, 0, wx.ALL|wx.EXPAND|wx.ALIGN_CENTER_VERTICAL, 5)
-        stt2boxquality.Add(txt_minimum_content, 0,wx.ALL|wx.EXPAND|wx.ALIGN_CENTER_VERTICAL| wx.ALIGN_CENTER_HORIZONTAL, 5)
-        stt2boxquality.Add(self.ctrl_min_cont, 0,wx.ALL|wx.EXPAND|wx.ALIGN_CENTER_VERTICAL, 5)
-        stt2boxquality.Add(txt_threading, 0,wx.ALL|wx.EXPAND|wx.ALIGN_CENTER_VERTICAL| wx.ALIGN_CENTER_HORIZONTAL, 5)
-        stt2boxquality.Add(self.ctrl_thread, 0, wx.ALL|wx.EXPAND|wx.ALIGN_CENTER_VERTICAL, 5)
+        stt2boxquality.Add(txt_type, 0,wx.ALL|wx.EXPAND, 5)
+        stt2boxquality.Add(self.ctrl_type, 0, wx.ALL|wx.EXPAND, 5)
+        stt2boxquality.Add(txt_minimum_content, 0,wx.ALL|wx.EXPAND, 5)
+        stt2boxquality.Add(self.ctrl_min_cont, 0,wx.ALL|wx.EXPAND, 5)
+        stt2boxquality.Add(txt_threading, 0,wx.ALL|wx.EXPAND, 5)
+        stt2boxquality.Add(self.ctrl_thread, 0, wx.ALL|wx.EXPAND, 5)
 
 
         stt2boxamorceR = wx.BoxSizer(wx.HORIZONTAL)
         txt_amorceR = wx.StaticText(self.panelpage2, label="To give the reverse primer (UPPER) : ", style = wx.ALIGN_CENTRE)
         self.ctrl_amorce = wx.TextCtrl(self.panelpage2, wx.ID_ANY, size=((250, 20)))
         self.ctrl_amorce.SetValue("")
-        stt2boxamorceR.Add(txt_amorceR,  0, wx.ALL|wx.EXPAND|wx.ALIGN_CENTER_VERTICAL| wx.ALIGN_CENTER_HORIZONTAL, 5)
+        stt2boxamorceR.Add(txt_amorceR,  0, wx.ALL|wx.EXPAND, 5)
         stt2boxamorceR.Add(self.ctrl_amorce, 0, wx.ALL|wx.EXPAND, 5)
 
-        stt2Box1.Add(stt2boxlength ,0, wx.ALL | wx.ALIGN_CENTER_HORIZONTAL | wx.EXPAND, border=5)
-        stt2Box1.Add(stt2boxquality,0,wx.ALL | wx.ALIGN_CENTER_HORIZONTAL | wx.EXPAND, border=5)
+        stt2Box1.Add(stt2boxlength ,0, wx.ALL | wx.EXPAND, border=5)
+        stt2Box1.Add(stt2boxquality,0,wx.ALL | wx.EXPAND, border=5)
         stt2Box1.Add(stt2boxamorceR, 0, wx.ALL | wx.EXPAND, border=5)
 
         stt2Sizer.Add(stt2Box1, 1, wx.EXPAND | wx.ALL, border = 5)
