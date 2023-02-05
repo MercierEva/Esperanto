@@ -19,5 +19,5 @@ RUN conda install -c conda-forge mamba
 COPY . /app/
 WORKDIR /app
 
-VOLUME ${PWD}/data /data/
+VOLUME ${PWD}/data /app/data/
 CMD ["python3.8", "u_app.py"])
