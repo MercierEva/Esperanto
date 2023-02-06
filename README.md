@@ -8,7 +8,7 @@ This app allows to browse or drag and drop some fastq files. The user may choose
 The workflow in the background is building with snakemake.
 The result is a sequence Fasta consensus with or without the variant calling and a statistical report. 
 
-## Installation with Conda
+## Install with Conda
 
 ### Requirements
 
@@ -30,7 +30,7 @@ The result is a sequence Fasta consensus with or without the variant calling and
 `python3.8 u_app.py`
 
 
-## Install with Docker
+## Or Install with Docker (But each docker build leads to rebuild each conda env)
 
 ### Requirements 
 
