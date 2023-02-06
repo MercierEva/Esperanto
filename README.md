@@ -51,6 +51,7 @@ data directory will be the directory where you may put the fastq.gz files in ord
 - Upload one or more of fastq.gz files
 - Choose a name for the final repository of the results (default 'WorkingSpace_YYYYMMDD')
 - Set min and max length for the step of data filtration
+- Set minimum of quantity of reads after the filtration step (Q17-->Q7 progressive to exceed this threshold parameter)
 - Set type of sequencing reads
 - Set number of threads (minimum 4 is recommended)
 - Set Reverse Primer for the orientation of sequences 
