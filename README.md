@@ -70,6 +70,17 @@ Main files are :
 - All_fastas.fasta : Display of sequences with major nucleotides.
 - StatisticReport.tsv : All data from the analysis with fasta sequence.
 
+Understanding each field of StatisticReport:
 
+QTreshold_1 : Threshold of quality of filtration of reads
+Depth_1 : Number of reads filtered
+Identity_Percent_2 : Percentage identity threshold by quality to form the main cluster in order to create a consensus with vsearch
+Depth_2: Number de reads inside the main cluster in order to create a consensus sequence
+Mean_read_depth: The average of the depth of the multi-alignment assembling by samtools
+Breath of coverage: The coverage of the multi-alignment assembling by samtools
+Length: The length of final consensus 
+Sequence fasta: Sequence consensus (without degenerated nucleotideas)
+
+ 
 
 
