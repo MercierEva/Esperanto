@@ -35,6 +35,10 @@ The result is a sequence Fasta consensus with or without the variant calling and
 - Docker <https://docs.docker.com/engine/install/>
 
 ### Install and Running App
+`cd Esperanto && mkdir data`
+
+data directory will be the directory where you may put the fastq.gz files in order to access them from the Docker container.
+
 `docker build -t esperanto . `
 
 `docker run -it --env="DISPLAY" --net=host -v ${PWD}/workflow:/app/workflow esperanto:latest //from a VM`
