@@ -22,6 +22,8 @@ The result is a sequence Fasta consensus with or without the variant calling and
  
 `conda create --name esperanto --file conda_env_for_esperanto.yml`
 
+`conda activate esperanto`
+
 #### Running App
 `cd Esperanto`
 
