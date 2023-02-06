@@ -12,7 +12,7 @@ The result is a sequence Fasta consensus with or without the variant calling and
 
 ### Requirements
 
-#### Linux machine Ubuntu 20.04
+#### Linux machine Ubuntu 20.04 or Ubuntu 22.04
 - conda <https://docs.conda.io/projects/conda/en/latest/user-guide/install/linux.html>
 - libgtk-3-dev 
 - libreoffice
@@ -27,7 +27,11 @@ The result is a sequence Fasta consensus with or without the variant calling and
 #### Running App
 `cd Esperanto`
 
-`python3.8 u_app.py`
+`python3.8 u_app.py` 
+
+or 
+
+`python3.10 u_app.py`
 
 
 ## Or Install with Docker (But each docker build leads to rebuild each conda env)
