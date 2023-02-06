@@ -40,7 +40,7 @@ The result is a sequence Fasta consensus with or without the variant calling and
 `docker run -it --env="DISPLAY" --net=host -v ${PWD}/workflow:/app/workflow esperanto:latest //from a VM`
 
 
-### User Guide
+## User Guide
 
 - Upload one or more of fastq.gz files
 - Choose a name for the final repository of the results (default 'WorkingSpace_YYYYMMDD')
@@ -49,7 +49,7 @@ The result is a sequence Fasta consensus with or without the variant calling and
 - Set number of threads (minimum 4 is recommended)
 - Set Reverse Primer for the orientation of sequences 
 
-### Go to Results
+## Go to Results
 
 The results are located inside the workflow/ directory in the directory with the name you specified. 
 Main files are :
