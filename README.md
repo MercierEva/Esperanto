@@ -51,10 +51,11 @@ The result is a sequence Fasta consensus with or without the variant calling and
 
 ## Go to Results
 
-The results are located inside the workflow/ directory in the directory with the name you specified. 
+The results are located inside the **workflow/** directory in the directory with the name you specified. (for example **workflow/WorkingSpace_YYYYMMDD/**) 
+
 Main files are :
 
-- All_Consensus_fastas.fasta : Display of consensus sequences after the variant calling, so with degenerated nucleotide.
+- All_Consensus_fastas.fasta : Display of consensus sequences after the variant calling, so with degenerated nucleotides.
 - All_fastas.fasta : Display of sequences with major nucleotides.
 - StatisticReport.tsv : All data from the analysis with fasta sequence.
 
