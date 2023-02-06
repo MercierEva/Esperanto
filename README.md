@@ -19,10 +19,12 @@ The result is a sequence Fasta consensus with or without the variant calling and
 
 #### Install
 `sudo apt-get install libgtk-3-dev libreoffice`
+ 
 `conda create --name esperanto --file conda_env_for_esperanto.yml`
 
 #### Running App
 `cd Esperanto`
+
 `python3.8 u_app.py`
 
 
@@ -33,7 +35,8 @@ The result is a sequence Fasta consensus with or without the variant calling and
 - Docker <https://docs.docker.com/engine/install/>
 
 ## Install and Running App
-`docker build -t esperanto .`
+`docker build -t esperanto . `
+
 `docker run -it --env="DISPLAY" --net=host -v ${PWD}/workflow:/app/workflow esperanto:latest //from a VM`
 
 
