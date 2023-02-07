@@ -18,13 +18,15 @@ The result is a sequence Fasta consensus with or without the variant calling and
 - libreoffice
 - libwebkitgtk-1.0-0
 - libffi6
+- libcanberra-gtk-module
+- dbus-x11
 
 #### Install
 `sudo add-apt-repository universe`
 
 `sudo apt update`
 
-`sudo apt install -y libwebkitgtk-1.0-0 libffi6 libgtk-3-dev libreoffice`
+`sudo apt install -y libwebkitgtk-1.0-0 libffi6 libgtk-3-dev libreoffice libcanberra-gtk-module dbus-x11`
 
 `conda create --name esperanto --file conda_env_for_esperanto.yml`
 
@@ -47,13 +49,11 @@ or
 - Docker <https://docs.docker.com/engine/install/>
 
 ### Install and Running App
-`cd Esperanto && mkdir data`
-
-data directory will be the directory where you may put the fastq.gz files in order to access them from the Docker container.
+`cd Esperanto`
 
 `docker build -t esperanto . `
 
-`docker run -it --env="DISPLAY" --net=host -v ${PWD}/workflow:/app/workflow esperanto:latest //from a VM`
+`docker run -it --env="DISPLAY" --net=host -v ${PWD}/:/app/ esperanto:latest //from a VM`
 
 
 ## User Guide
