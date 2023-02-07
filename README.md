@@ -42,7 +42,7 @@ or
 `python3.10 u_app.py`
 
 
-## Or Install with Docker (But each docker build leads to rebuild each conda env)
+## Or Install with Docker 
 
 ### Requirements 
 
