@@ -16,10 +16,16 @@ The result is a sequence Fasta consensus with or without the variant calling and
 - conda <https://docs.conda.io/projects/conda/en/latest/user-guide/install/linux.html>
 - libgtk-3-dev 
 - libreoffice
+- libwebkitgtk-1.0-0
+- libffi6
 
 #### Install
-`sudo apt-get install libgtk-3-dev libreoffice`
- 
+`sudo add-apt-repository universe`
+
+`sudo apt update`
+
+`sudo apt install -y libwebkitgtk-1.0-0 libffi6 libgtk-3-dev libreoffice`
+
 `conda create --name esperanto --file conda_env_for_esperanto.yml`
 
 `conda activate esperanto`
@@ -75,7 +81,7 @@ Understanding each field of StatisticReport:
 - QTreshold_1 : Threshold of quality of filtration of reads \
 - Depth_1 : Number of reads filtered \
 - Identity_Percent_2 : Percentage identity threshold by quality to form the main cluster in order to create a consensus with vsearch \
-- Depth_2: Number de reads inside the main cluster in order to create a consensus sequence \ 
+- Depth_2: Number of reads inside the main cluster in order to create a consensus sequence \ 
 - Mean_read_depth: The average of the depth of the multi-alignment assembling by samtools \
 - Breath of coverage: The coverage of the multi-alignment assembling by samtools \
 - Length: The length of final consensus \
