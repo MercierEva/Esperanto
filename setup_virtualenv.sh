@@ -45,7 +45,7 @@ setup_virtualenv() {
 install_wxpython() {
     # Installer wxPython
     echo "Installation de wxPython..."
-    pip install wxPython
+    pip install wxPython pandas snakemake PyYAML
 }
 
 # Exécution des fonctions
