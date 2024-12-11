@@ -6,5 +6,6 @@ config_wf.yaml
 workflow/run_medaka.sh
 workflow/scripts/py_scripts/report_stats_final.py
 workflow/scripts/py_scripts/report_stats_complementary2.py
-app/__pycache__
-wxpython_env
+__pycache__
+env_wxpython/
+
