@@ -63,9 +63,10 @@ rule rename :
         config["folder"]+"02_vsearch/PASS/sequence_{sample}_consensus.fasta"
     message : 
         "The consensus header of the selected (dominant) cluster is renamed."
-    shell: """
-        awk \'/^>/{{ print \">{wildcards.sample}_consensus_vsearch\" ; next }}{{ print $1 }}\' {input[0]} | head -2 > {output[0]} || true
+    shell: r"""
+        awk '/^>/{ print ">{wildcards.sample}_consensus_vsearch" ; next }{ print $1 }' {input[0]} | head -2 > {output[0]} || true
         """
+
 
 rule orientation_to_forward : 
     input : 
@@ -174,22 +175,21 @@ rule consensus :
         config["folder"]+"06_seq_inform/{sample}_SCAN.fa"
     message :
         "Sequence reconstruction with integrated variants. "
-    shell : """    
-        awk -F\"\\t\" \'BEGIN{{print \">{wildcards.sample}\"}}
-        {{
-            if(NR>2){{
-                {{gsub(/[\*\+-].*\/[\+-]/, \"\", $4)}}
-                if($4 ~ /\/\+/ ){{
-                    printf $3$4 }}
-                else if($4 ~ /\/-/ ){{
+    shell: r"""
+        awk -F"\t" 'BEGIN{print ">{wildcards.sample}"}
+        {
+            if(NR>2){
+                gsub(/[\*\+-].*\/[\+-]/, "", $4)
+                if($4 ~ /\/\+/ ){
+                    printf $3$4 }
+                else if($4 ~ /\/-/ ){
                     printf $3
-                    NR++ }}
-                else {{
-                    printf $4}}
-                }}
-            }}END{{ print \"\\n\" }}\' {input} > {output} || true    
-    """
-
+                    NR++ }
+                else {
+                    printf $4}
+                }
+            }END{ print "\n" }' {input} > {output} || true    
+        """
 
 rule report :
     input :
