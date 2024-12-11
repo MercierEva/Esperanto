@@ -2,58 +2,78 @@
 
 ## Description 
 
-An app to analyse Sequencing Data from ONT technology.
+An app to analyze Sequencing Data from ONT technology.
 
-This app allows to browse or drag and drop some fastq files. The user may choose few parameters to filter data. Then, all that remains is to launch the program. 
-The workflow in the background is building with snakemake.
-The result is a sequence Fasta consensus with or without the variant calling and a statistical report. 
+This app allows browsing or dragging and dropping FASTQ files. The user may choose a few parameters to filter the data. Then, the program is launched. 
+The workflow in the background is built using **Snakemake**.
+The result is a sequence Fasta consensus, with or without the variant calling, along with a statistical report.
 
-## Install with Conda
+## Install with Virtualenv (Python Environment)
 
 ### Requirements
 
-#### Linux machine Ubuntu 20.04 or Ubuntu 22.04
-- conda <https://docs.conda.io/projects/conda/en/latest/user-guide/install/linux.html>
-- libgtk-3-dev 
-- libreoffice
-- libwebkitgtk-1.0-0
-- libffi6
-- libcanberra-gtk-module
-- dbus-x11
+#### Linux machine (Ubuntu 20.04, Ubuntu 22.04, Fedora)
+- Python 3.8 or later
+- **Virtualenv** (for creating a Python virtual environment)
+- **Dependencies**:
+  - Ubuntu 20.04 / 22.04 or Fedora:
+    - `libgtk-3-dev`
+    - `libwebkit2gtk-4.0-dev`
+    - `libffi6` (Ubuntu only)
+    - `libcanberra-gtk-module`
+    - `dbus-x11`
+    - `build-essential`
+    - **Other development libraries** (see the detailed dependencies)
 
-#### Install
-`sudo add-apt-repository universe`
+### Install Steps
 
-`sudo apt update`
+1. **Install system dependencies (Ubuntu 20.04 / 22.04)**:
+    ```bash
+    sudo add-apt-repository universe
+    sudo apt update
+    sudo apt install -y libwebkitgtk-1.0-0 libffi6 libgtk-3-dev libreoffice libcanberra-gtk-module dbus-x11
+    ```
 
-`sudo apt install -y libwebkitgtk-1.0-0 libffi6 libgtk-3-dev libreoffice libcanberra-gtk-module dbus-x11`
+    **For Fedora**:
+    ```bash
+    sudo dnf install -y python3-devel freeglut-devel mesa-libGL-devel \
+        mesa-libGLU-devel gstreamer1-plugins-base-devel gtk3-devel \
+        libjpeg-devel libnotify-devel libpng-devel SDL2-devel libSM-devel \
+        libtiff-devel webkit2gtk3-devel libXtst-devel
+    ```
 
-`conda create --name esperanto --file conda_env_for_esperanto.yml`
+2. **Setup Python Virtual Environment**:
+   1. Install Python dependencies:
+      ```bash
+      python3 -m pip install --upgrade pip
+      python3 -m pip install virtualenv
+      ```
 
-`conda activate esperanto`
+   2. Create a new virtual environment:
+      ```bash
+      python3 -m venv env_esperanto
+      ```
+
+   3. Activate the virtual environment:
+      ```bash
+      source env_esperanto/bin/activate
+      ```
+
+3. **Install wxPython**:
+   Inside the activated environment, install **wxPython**:
+   ```bash
+   pip install wxPython
+
 
 #### Running App
 `cd Esperanto`
 
-`python3.8 u_app.py` 
+`python3 u_app.py` 
 
 or 
 
-`python3.10 u_app.py`
+`python3 u_app.py`
 
-
-## Or Install with Docker 
-
-### Requirements 
-
-- Docker <https://docs.docker.com/engine/install/>
-
-### Install and Running App
-`cd Esperanto`
-
-`docker build -t esperanto . `
-
-`docker run -it --env="DISPLAY" --net=host -v ${PWD}/:/app/ esperanto:latest //from a VM`
 
 
 ## User Guide
