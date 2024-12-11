@@ -46,6 +46,7 @@ install_wxpython() {
     # Installer wxPython
     echo "Installation de wxPython..."
     pip install wxPython PyYAML snakemake pandas pypubsub
+
 }
 
 # Exécution des fonctions
@@ -54,3 +55,4 @@ setup_virtualenv
 install_wxpython
 
 echo "Configuration terminée. L'environnement virtuel 'env_wxpython' a été créé et wxPython a été installé."
+

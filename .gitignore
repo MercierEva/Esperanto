@@ -8,4 +8,3 @@ workflow/scripts/py_scripts/report_stats_final.py
 workflow/scripts/py_scripts/report_stats_complementary2.py
 __pycache__
 env_wxpython/
-
