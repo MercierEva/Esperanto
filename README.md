@@ -51,29 +51,26 @@ The result is a sequence Fasta consensus, with or without the variant calling, a
 
    2. Create a new virtual environment:
       ```bash
-      python3 -m venv env_esperanto
+      python3 -m venv env_wxpython
       ```
 
    3. Activate the virtual environment:
       ```bash
-      source env_esperanto/bin/activate
+      source env_wxpython/bin/activate
       ```
 
 3. **Install wxPython**:
    Inside the activated environment, install **wxPython**:
    ```bash
-   pip install wxPython
+   pip install wxPython PyYAML pandas snakemake pypubsub
 
+
+### Or run `bash setup_virtualenv.sh`
 
 #### Running App
 `cd Esperanto`
 
-`python3 u_app.py` 
-
-or 
-
-`python3 u_app.py`
-
+`python u_app.py` 
 
 
 ## User Guide
