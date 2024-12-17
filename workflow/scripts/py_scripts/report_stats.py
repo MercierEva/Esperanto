@@ -88,6 +88,9 @@ class Report_Stat:
         cmd="samtools depth -a " + folder +"04_multialignment/"+ str(sample) +"_MSA.sorted.bam | awk '{c++; if($3>0) total+=1}END{print (total/c)*100}'"
         proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, err = proc.communicate()
+        decoded_output = out.decode().strip()
+        if not decoded_output:
+            raise ValueError("Command produced no output, cannot calculate mean read depth.")
         return float(out.decode().split("\n")[0].replace(',', '.'))
 
     def write_array(self, d, output):

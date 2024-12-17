@@ -38,14 +38,15 @@ setup_virtualenv() {
     python3 -m venv env_wxpython
 
     # Activer l'environnement virtuel
-    source env_wxpython/bin/activate
+    source env_wxpython/bin/activate || { echo "Erreur: Impossible d'activer l'environnement virtuel."; exit 1; }
 }
 
 # Fonction pour installer wxPython dans l'environnement virtuel
 install_wxpython() {
     # Installer wxPython
     echo "Installation de wxPython..."
-    pip install wxPython PyYAML snakemake pandas pypubsub
+    pip install wxPython PyYAML snakemake pandas pypubsub biopython || { echo "Erreur: L'installation de wxPython a échoué."; exit 1; }
+}
 
 # Exécution des fonctions
 install_dependencies
@@ -53,4 +54,3 @@ setup_virtualenv
 install_wxpython
 
 echo "Configuration terminée. L'environnement virtuel 'env_wxpython' a été créé et wxPython a été installé."
-
