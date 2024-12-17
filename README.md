@@ -62,10 +62,30 @@ The result is a sequence Fasta consensus, with or without the variant calling, a
 3. **Install wxPython**:
    Inside the activated environment, install **wxPython**:
    ```bash
+   pip install wheel
    pip install wxPython PyYAML pandas snakemake pypubsub
 
 
 ### Or run `bash setup_virtualenv.sh`
+
+### Launch GUI on a remote VM 
+`sudo nano /etc/ssh/sshd_config`
+
+- set the field X11forwarding to 'yes':
+
+X11Forwarding yes
+
+- save 
+
+- Install xauth on ssh server
+`sudo apt update && sudo apt install --assume-yes xauth `# Ubuntu and other Debian-based distribution
+`sudo dnf install --assumeyes xorg-x11-xauth ` # CentOS and other Red Hat based distributions
+
+- Launch SSH connection 
+`ssh -X user@IP`
+
+- Set in the end of ~/.bashrc 
+export DISPLAY=:0
 
 #### Running App
 `cd Esperanto`

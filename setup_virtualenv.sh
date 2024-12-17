@@ -45,6 +45,7 @@ setup_virtualenv() {
 install_wxpython() {
     # Installer wxPython
     echo "Installation de wxPython..."
+    pip install wheel
     pip install wxPython PyYAML snakemake pandas pypubsub biopython || { echo "Erreur: L'installation de wxPython a échoué."; exit 1; }
 }
 
