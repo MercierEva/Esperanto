@@ -148,7 +148,7 @@ class MyFrame(wx.Frame):
         try :             
             self.text1.SetLabelText("Started")
             self.progress_bar.Show()
-            inputNf1 = 'snakemake -s ' + self.workspace + '/workflow/SnakeFile --cores ' + self.listbook.thread +' --use-conda'
+            inputNf1 = 'snakemake -s ' + self.workspace + '/workflow/Snakefile --cores ' + self.listbook.thread +' --use-conda'
             
             try :
                 dir = '.snakemake/locks'
